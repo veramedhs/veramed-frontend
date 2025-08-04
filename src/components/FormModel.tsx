@@ -1,12 +1,11 @@
-"use client";
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Paperclip, Loader2 } from 'lucide-react';
+import { toast, Toaster } from 'react-hot-toast';
 
-// Import UI components
+// Import your UI components
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -29,10 +28,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// --- IMPORT THE NEW COUNTRY DATA ---
-import { countryData } from '@/lib/data/countries';
 
-// --- FORM VALIDATION SCHEMA (No changes needed here) ---
+
+// Import country data
+import { countryData } from '@/lib/data/countries';
+import { apiClient } from '@/lib/apiClient';
+
+// Form validation schema
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -44,7 +46,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-// --- COMPONENT PROPS (No changes needed here) ---
+// Component props
 interface FormModalProps {
   triggerElement: React.ReactNode;
   title: string;
@@ -52,7 +54,7 @@ interface FormModalProps {
   namePlaceholder: string;
 }
 
-export const FormModal: React.FC<FormModalProps> = ({ triggerElement, title, description,namePlaceholder }) => {
+export const FormModal: React.FC<FormModalProps> = ({ triggerElement, title, description, namePlaceholder }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fileName, setFileName] = useState('');
@@ -69,7 +71,7 @@ export const FormModal: React.FC<FormModalProps> = ({ triggerElement, title, des
   });
 
   const { register, handleSubmit, formState: { errors }, reset, watch } = form;
-  
+
   // Watch for changes in the file input
   const fileInput = watch('attachment');
   React.useEffect(() => {
@@ -82,30 +84,52 @@ export const FormModal: React.FC<FormModalProps> = ({ triggerElement, title, des
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
-    console.log('Form Data:', data);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    console.log('Submission successful!');
-    setIsSubmitting(false);
-    
-    setIsOpen(false);
-    reset();
-    setFileName('');
+
+    const formData = new FormData();
+    formData.append('fullName', data.name);
+    formData.append('email', data.email);
+    formData.append('phone', `${data.countryCode}${data.phone}`);
+    formData.append('message', data.message);
+
+    if (data.attachment && data.attachment.length > 0) {
+      formData.append('attachment', data.attachment[0]);
+    }
+
+    const submissionPromise = apiClient.post('/api/v1/veramed/collaborate', formData);
+
+    toast.promise(submissionPromise, {
+      loading: 'Submitting your inquiry...',
+      success: 'Your inquiry has been submitted successfully!',
+      error: 'There was an error submitting your inquiry.',
+    });
+
+    try {
+      await submissionPromise;
+      setIsOpen(false);
+      reset();
+      setFileName('');
+    } catch (error) {
+      console.error('Submission failed:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{triggerElement}</DialogTrigger>
-      <DialogContent className="sm:max-w-lg bg-card text-foreground">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-primary">{title}</DialogTitle>
-          <DialogDescription className="text-muted-foreground">{description}</DialogDescription>
-        </DialogHeader>
+    <>
+      {/* Ensure Toaster is included in your app's layout, once */}
+      <Toaster position="top-center" reverseOrder={false} />
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>{triggerElement}</DialogTrigger>
+        <DialogContent className="sm:max-w-lg bg-card text-foreground">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-primary">{title}</DialogTitle>
+            <DialogDescription className="text-muted-foreground">{description}</DialogDescription>
+          </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-1 gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* ... (rest of your form fields are the same) */}
+            <div className="grid grid-cols-1 gap-4">
             {/* Name Field */}
             <div className="space-y-2">
               <Label htmlFor="name">{namePlaceholder}</Label>
@@ -155,7 +179,7 @@ export const FormModal: React.FC<FormModalProps> = ({ triggerElement, title, des
             {/* Attachment Field */}
             <div className="space-y-2">
               <Label htmlFor="attachment">Attach a File (Optional)</Label>
-              <Label 
+              <Label
                 htmlFor="attachment-input"
                 className="flex items-center gap-2 p-2 border-2 border-dashed rounded-md cursor-pointer hover:border-primary hover:bg-primary/10 transition-colors"
               >
@@ -168,25 +192,26 @@ export const FormModal: React.FC<FormModalProps> = ({ triggerElement, title, des
             </div>
           </div>
 
-          <DialogFooter className="pt-4">
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancel
+            <DialogFooter className="pt-4">
+              <DialogClose asChild>
+                <Button type="button" variant="outline">
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button type="submit" variant="medical" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  'Submit Inquiry'
+                )}
               </Button>
-            </DialogClose>
-            <Button type="submit" variant="medical" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                'Submit Inquiry'
-              )}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };

@@ -1,11 +1,7 @@
 import axios from 'axios';
 
 // Get the base URL from environment variables, with a fallback for development
-const baseURL = process.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
-export const apiClient = axios.create({
-  baseURL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+
+export const apiClient = axios.create({baseURL});

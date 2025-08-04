@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import ServiceForm from "../components/ServiceForm";
+import { CheckCircle } from "lucide-react";
 
 const serviceData: Record<
   string,
@@ -76,71 +77,69 @@ const ServiceDetail: React.FC = () => {
 
   if (!service) {
     return (
-      <div className="py-16 px-4 md:px-16 bg-blue-50 min-h-screen">
-        <h1 className="text-3xl md:text-4xl font-bold text-blue-900 mb-6">
-          Service Not Found
-        </h1>
-        <p className="text-lg text-gray-700 max-w-3xl mb-10">
-          The requested service could not be found.
-        </p>
+      <div className="py-16 px-4 md:px-16 bg-gray-50 min-h-screen">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+            Service Not Found
+          </h1>
+          <p className="text-lg text-gray-600">
+            The requested service could not be found. Please check the URL or
+            return to the homepage.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="py-16 px-4 md:px-16 bg-blue-50 min-h-screen">
-      <h1
-        className={`text-3xl font-bold text-blue-900 mb-6 ${
-          serviceId === "treatment-planning" ? "text-center" : ""
-        }`}
-      >
-        {serviceId === "treatment-planning" ? (
-          <>
-            <span>Treatment Planning</span>
-            <br className="block md:hidden" />
-            <span className="md:ml-1">& Hospital Selection</span>
-          </>
-        ) : (
-          service.title
-        )}
-      </h1>
-
-      <p className="text-base md:text-lg text-gray-700  mb-10 text-center">
-        {service.description}
-      </p>
-
-      {/* Grid Row: What's Included | Quote | More Information */}
-      <div className="grid grid-cols-1 md:grid-cols-3 md:gap-x-12 gap-y-6 mb-12">
-        {/* What's Included */}
-        <div className="pl-2">
-          <h2 className="text-xl font-semibold text-blue-800 mb-3">
-            What’s Included
-          </h2>
-          <ul className="list-disc pl-5 text-gray-700 space-y-1">
-            {service.included.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Quote */}
-        <div className="bg-white p-4 border-l-4 border-blue-500 shadow rounded-md flex items-center justify-center">
-          <p className="italic text-blue-700 text-lg md:text-xl font-medium text-center">
-            “{service.quote}”
+    <div className="py-16 px-4 md:px-16 bg-gray-50 min-h-screen">
+      <div className="max-w-6xl mx-auto">
+        {/* Service Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+            {service.title}
+          </h1>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            {service.description}
           </p>
         </div>
 
-        {/* More Information */}
-        <div>
-          <h2 className="text-xl font-semibold text-blue-800 mb-3">
-            More Information
-          </h2>
-          <p className="text-gray-700 leading-relaxed">{service.moreInfo}</p>
+        {/* What's Included & More Info */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="md:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              What’s Included
+            </h2>
+            <ul className="space-y-3">
+              {service.included.map((item, index) => (
+                <li key={index} className="flex items-center">
+                  <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
+                  <span className="text-gray-700">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              More Information
+            </h2>
+            <p className="text-gray-700 leading-relaxed">{service.moreInfo}</p>
+          </div>
+        </div>
+
+        {/* Quote */}
+        <div className="text-center mb-12">
+          <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-800 p-6 rounded-lg max-w-2xl mx-auto">
+            <p className="text-xl italic font-medium">“{service.quote}”</p>
+          </div>
+        </div>
+
+        {/* Shared Form */}
+        <div className="bg-white p-8 rounded-lg shadow-md">
+          <ServiceForm serviceTitle={service.title} />
         </div>
       </div>
-
-      {/* Shared Form */}
-      <ServiceForm serviceTitle={service.title} />
     </div>
   );
 };

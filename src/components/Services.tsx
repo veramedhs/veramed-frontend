@@ -70,8 +70,9 @@ const Services = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
           {services.map((service, index) => (
-            <Link to={service.path}>
+            <Link to={service.path} key={index}>
               <Card
+            
                 key={index}
                 className="p-8 hover:shadow-medical transition-all duration-500 hover:-translate-y-2 bg-card border-border group"
               >

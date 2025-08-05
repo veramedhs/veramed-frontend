@@ -171,18 +171,26 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ serviceTitle }) => {
           <Input id="email" name="email" type="email" placeholder="Enter email address" required />
         </div>
       </div>
+
+
       <div className="space-y-2">
         <Label htmlFor="phone">Mobile Number</Label>
-        <div className="flex flex-col gap-2 md:flex-row">
-          <Select name="countryCode" defaultValue="IN-+91" required>
-            <SelectTrigger className="w-full md:w-[130px]"><SelectValue placeholder="Code" /></SelectTrigger>
+
+        <div className="flex flex-col gap-2 md:flex-row" >
+          <Select name="countryCode"  defaultValue="IN-+91" required    >
+
+            <SelectTrigger className="w-full md:w-[130px]">
+              <SelectValue placeholder="Code" /></SelectTrigger>
             <SelectContent>
               {countryData.map((country) => (
-                <SelectItem key={country.iso} value={`${country.iso}-${country.code}`}>{country.iso} (+{country.code})</SelectItem>
-              ))}
+  <SelectItem key={country.iso} value={`${country.iso}-+${country.code}`}>
+    {country.iso} (+{country.code})
+  </SelectItem>
+))}
+
             </SelectContent>
           </Select>
-          <Input id="phone" name="phone" type="tel" placeholder="98765 43210" required className="flex-1" />
+          <Input id="phone" name="phone" type="tel" placeholder="Enter Your Mobile Number" required className="flex-1" />
         </div>
       </div>
     </>

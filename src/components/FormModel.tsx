@@ -163,7 +163,7 @@ export const FormModal: React.FC<FormModalProps> = ({ triggerElement, title, des
                     ))}
                   </SelectContent>
                 </Select>
-                <Input id="phone" type="tel" placeholder="9876543210" {...register('phone')} className="flex-1" />
+                <Input id="phone" type="tel" placeholder="Enter Your Mobile Number" {...register('phone')} className="flex-1" />
               </div>
               {errors.countryCode && <p className="text-sm text-red-500">{errors.countryCode.message}</p>}
               {errors.phone && <p className="text-sm text-red-500">{errors.phone.message}</p>}

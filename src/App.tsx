@@ -13,6 +13,7 @@ import BlogPage from "./pages/BlogPage";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Header from "./components/Header";
+import StartYourJourney from "./pages/StartYourJourney";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
           <Route path="/services" element={<Services />} />
           <Route path="/servicedetails/:serviceId" element={<ServiceDetail />} />
+          <Route path="/start-your-journey" element={<StartYourJourney />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

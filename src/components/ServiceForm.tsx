@@ -190,7 +190,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ serviceTitle }) => {
 
             </SelectContent>
           </Select>
-          <Input id="phone" name="phone" type="tel" placeholder="Enter Your Mobile Number" required className="flex-1" />
+          <Input id="phone" name="phone" type="tel" placeholder="**********" required className="flex-1" />
         </div>
       </div>
     </>

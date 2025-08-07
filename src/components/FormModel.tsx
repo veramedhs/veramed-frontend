@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Paperclip, Loader2 } from 'lucide-react';
+import { Paperclip, Loader2, X } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
 
 // Import your UI components
@@ -28,20 +28,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-
-
 // Import country data
 import { countryData } from '@/lib/data/countries';
 import { apiClient } from '@/lib/apiClient';
 
-// Form validation schema
+// Form validation schema - UPDATED for multiple files
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   countryCode: z.string().min(1, { message: 'Please select a country code.' }),
   phone: z.string().min(8, { message: 'Please enter a valid phone number.' }),
   message: z.string().min(10, { message: 'Message must be at least 10 characters.' }).max(500),
-  attachment: z.any().optional(),
+  attachment: z.instanceof(FileList).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -57,7 +55,7 @@ interface FormModalProps {
 export const FormModal: React.FC<FormModalProps> = ({ triggerElement, title, description, namePlaceholder }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [fileName, setFileName] = useState('');
+  const [fileNames, setFileNames] = useState<string[]>([]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -70,17 +68,29 @@ export const FormModal: React.FC<FormModalProps> = ({ triggerElement, title, des
     },
   });
 
-  const { register, handleSubmit, formState: { errors }, reset, watch } = form;
+  const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = form;
 
   // Watch for changes in the file input
   const fileInput = watch('attachment');
   React.useEffect(() => {
     if (fileInput && fileInput.length > 0) {
-      setFileName(fileInput[0].name);
+      const names = Array.from(fileInput).map(file => file.name);
+      setFileNames(names);
     } else {
-      setFileName('');
+      setFileNames([]);
     }
   }, [fileInput]);
+
+  const handleRemoveFile = (indexToRemove: number) => {
+    const currentFiles = Array.from(watch('attachment') || []);
+    const updatedFiles = currentFiles.filter((_, index) => index !== indexToRemove);
+
+    // Create a new FileList and update the form value
+    const dataTransfer = new DataTransfer();
+    updatedFiles.forEach(file => dataTransfer.items.add(file));
+    setValue('attachment', dataTransfer.files, { shouldValidate: true });
+  };
+
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
@@ -91,8 +101,12 @@ export const FormModal: React.FC<FormModalProps> = ({ triggerElement, title, des
     formData.append('phone', `${data.countryCode}${data.phone}`);
     formData.append('message', data.message);
 
+    // Append all files to the form data
     if (data.attachment && data.attachment.length > 0) {
-      formData.append('attachment', data.attachment[0]);
+      Array.from(data.attachment).forEach(file => {
+        // Use 'attachments[]' to indicate an array of files
+        formData.append('attachments[]', file);
+      });
     }
 
     const submissionPromise = apiClient.post('/api/v1/veramed/collaborate', formData);
@@ -107,7 +121,7 @@ export const FormModal: React.FC<FormModalProps> = ({ triggerElement, title, des
       await submissionPromise;
       setIsOpen(false);
       reset();
-      setFileName('');
+      setFileNames([]);
     } catch (error) {
       console.error('Submission failed:', error);
     } finally {
@@ -117,7 +131,6 @@ export const FormModal: React.FC<FormModalProps> = ({ triggerElement, title, des
 
   return (
     <>
-      {/* Ensure Toaster is included in your app's layout, once */}
       <Toaster position="top-center" reverseOrder={false} />
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>{triggerElement}</DialogTrigger>
@@ -128,69 +141,90 @@ export const FormModal: React.FC<FormModalProps> = ({ triggerElement, title, des
           </DialogHeader>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* ... (rest of your form fields are the same) */}
             <div className="grid grid-cols-1 gap-4">
-            {/* Name Field */}
-            <div className="space-y-2">
-              <Label htmlFor="name">{namePlaceholder}</Label>
-              <Input id="name" placeholder={namePlaceholder} {...register('name')} />
-              {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
-            </div>
-
-            {/* Email Field */}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <Input id="email" type="email" placeholder="you@example.com" {...register('email')} />
-              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
-            </div>
-
-            {/* Phone Field - UPDATED */}
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <div className="flex items-center gap-2">
-                <Select
-                  defaultValue="+91"
-                  onValueChange={(value) => form.setValue('countryCode', value)}
-                >
-                  <SelectTrigger className="w-[130px]">
-                    <SelectValue placeholder="Code" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {countryData.map((country) => (
-                      <SelectItem key={country.iso} value={`+${country.code}`}>
-                        {country.country} (+{country.code})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Input id="phone" type="tel" placeholder="Enter Your Mobile Number" {...register('phone')} className="flex-1" />
+              {/* Name Field */}
+              <div className="space-y-2">
+                <Label htmlFor="name">{namePlaceholder}</Label>
+                <Input id="name" placeholder={namePlaceholder} {...register('name')} />
+                {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
               </div>
-              {errors.countryCode && <p className="text-sm text-red-500">{errors.countryCode.message}</p>}
-              {errors.phone && <p className="text-sm text-red-500">{errors.phone.message}</p>}
-            </div>
 
-            {/* Message Field */}
-            <div className="space-y-2">
-              <Label htmlFor="message">Your Message</Label>
-              <Textarea id="message" placeholder="Please describe your needs..." {...register('message')} rows={4} />
-              {errors.message && <p className="text-sm text-red-500">{errors.message.message}</p>}
-            </div>
+              {/* Email Field */}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input id="email" type="email" placeholder="you@example.com" {...register('email')} />
+                {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+              </div>
 
-            {/* Attachment Field */}
-            <div className="space-y-2">
-              <Label htmlFor="attachment">Attach a File (Optional)</Label>
-              <Label
-                htmlFor="attachment-input"
-                className="flex items-center gap-2 p-2 border-2 border-dashed rounded-md cursor-pointer hover:border-primary hover:bg-primary/10 transition-colors"
-              >
-                <Paperclip className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">
-                  {fileName || 'Click to upload a document'}
-                </span>
-              </Label>
-              <Input id="attachment-input" type="file" {...register('attachment')} className="hidden" />
+              {/* Phone Field */}
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <div className="flex items-center gap-2">
+                  <Select
+                    defaultValue="+91"
+                    onValueChange={(value) => setValue('countryCode', value)}
+                  >
+                    <SelectTrigger className="w-[130px]">
+                      <SelectValue placeholder="Code" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countryData.map((country) => (
+                        <SelectItem key={country.iso} value={`+${country.code}`}>
+                          {country.country} (+{country.code})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Input id="phone" type="tel" placeholder="XXXXXXXXXX" {...register('phone')} className="flex-1" />
+                </div>
+                {errors.countryCode && <p className="text-sm text-red-500">{errors.countryCode.message}</p>}
+                {errors.phone && <p className="text-sm text-red-500">{errors.phone.message}</p>}
+              </div>
+
+              {/* Message Field */}
+              <div className="space-y-2">
+                <Label htmlFor="message">Your Message</Label>
+                <Textarea id="message" placeholder="Please describe your needs..." {...register('message')} rows={4} />
+                {errors.message && <p className="text-sm text-red-500">{errors.message.message}</p>}
+              </div>
+
+              {/* Attachment Field - UPDATED */}
+              <div className="space-y-2">
+                <Label htmlFor="attachment-input">Attach Files (Optional)</Label>
+                {/* File Upload Trigger */}
+                <Label
+                  htmlFor="attachment-input"
+                  className="flex items-center gap-2 p-2 border-2 border-dashed rounded-md cursor-pointer hover:border-primary hover:bg-primary/10 transition-colors"
+                >
+                  <Paperclip className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    Click to upload documents
+                  </span>
+                </Label>
+                <Input id="attachment-input" type="file" {...register('attachment')} className="hidden" multiple />
+
+                {/* Display Selected Files */}
+                {fileNames.length > 0 && (
+                  <div className="space-y-2 mt-2">
+                    <p className="text-sm font-medium">Selected files:</p>
+                    {fileNames.map((name, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 text-sm border rounded-md bg-muted/50">
+                        <span className="truncate">{name}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="w-6 h-6"
+                          onClick={() => handleRemoveFile(index)}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
 
             <DialogFooter className="pt-4">
               <DialogClose asChild>

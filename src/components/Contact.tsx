@@ -2,10 +2,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Phone, 
-  Mail, 
-  MapPin, 
+import {
+  Phone,
+  Mail,
+  MapPin,
   Clock,
   Send,
   MessageCircle,
@@ -19,11 +19,11 @@ const Contact = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Ready to Begin Your 
+            Ready to Begin Your
             <span className="text-primary"> Healthcare Journey?</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Get in touch with our expert team for a personalized consultation. 
+            Get in touch with our expert team for a personalized consultation.
             We're here to guide you every step of the way.
           </p>
         </div>
@@ -53,7 +53,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-foreground">Email</h4>
-                  <p className="text-muted-foreground">info@veramedhealth.com</p>
+                  <p className="text-muted-foreground">veramedhs@gmail.com</p>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground">
@@ -68,7 +68,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-foreground">Office</h4>
-                  <p className="text-muted-foreground">New Delhi, India</p>
+                  <p className="text-muted-foreground">Gurgaon, India</p>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground">
@@ -98,7 +98,7 @@ const Contact = () => {
               <h3 className="text-2xl font-bold text-foreground mb-6">
                 Get Your Free Consultation
               </h3>
-              
+
               <form className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -141,7 +141,7 @@ const Contact = () => {
                   <label className="block text-sm font-medium text-foreground mb-2">
                     Additional Information
                   </label>
-                  <Textarea 
+                  <Textarea
                     placeholder="Please provide any additional details about your medical history, preferences, or questions..."
                     rows={4}
                   />
@@ -172,7 +172,9 @@ const Contact = () => {
             <p className="text-sm text-muted-foreground mb-4">
               Instant support for urgent queries
             </p>
-            <Button variant="outline" size="sm">Start Chat</Button>
+            <a href="https://wa.me/9953306560" target="_blank">
+              <Button variant="outline" size="sm">Start Chat</Button>
+            </a>
           </Card>
 
           <Card className="p-6 text-center hover:shadow-card-medical transition-all duration-300 hover:-translate-y-1 group cursor-pointer">
@@ -183,18 +185,20 @@ const Contact = () => {
             <p className="text-sm text-muted-foreground mb-4">
               24/7 emergency medical assistance
             </p>
-            <Button variant="medical" size="sm">Call Now</Button>
+            <a href="tel:+919953306560" target="_blank">
+              <Button variant="medical" size="sm">Start Chat</Button>
+            </a>
           </Card>
 
           <Card className="p-6 text-center hover:shadow-card-medical transition-all duration-300 hover:-translate-y-1 group cursor-pointer">
             <div className="p-4 bg-trust-blue rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Globe className="w-8 h-8 text-white" />
             </div>
-            <h4 className="font-semibold text-foreground mb-2">Country Guide</h4>
+            <h4 className="font-semibold text-foreground mb-2">Find Doctors</h4>
             <p className="text-sm text-muted-foreground mb-4">
-              Explore treatment options by country
+              Browse specialists based on your condition
             </p>
-            <Button variant="outline" size="sm">View Guide</Button>
+            <Button variant="outline" size="sm">Browse</Button>
           </Card>
         </div>
       </div>

@@ -85,7 +85,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-white/80" />
-                <span className="text-white/90">info@veramedhealth.com</span>
+                <span className="text-white/90">veramedhs@gmail.com</span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-white/80" />
@@ -106,7 +106,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-white/20 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="text-white/80 text-sm mb-4 md:mb-0">
-            © 2024 Veramed Health Solutions. All rights reserved. | Founded by Shah Fahad
+            © 2025 Veramed Health Solutions. All rights reserved. | Founded by Shah Fahad
           </div>
           <div className="flex space-x-6 text-sm">
             <a href="#" className="text-white/80 hover:text-white transition-colors">Privacy Policy</a>

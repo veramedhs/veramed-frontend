@@ -162,14 +162,14 @@ const WhyChooseUs = () => {
           </div>
         </div>
 
-        <div className="text-center mt-12">
+        {/* <div className="text-center mt-12">
           <Button variant="medical" size="lg" className="mr-4">
             Start Your Journey
           </Button>
           <Button variant="outline" size="lg">
             Compare Services
           </Button>
-        </div>
+        </div> */}
       </div>
     </section>
   );

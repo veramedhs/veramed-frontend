@@ -146,7 +146,7 @@ const Header = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="w-4 h-4" />
-                  <a href="mailto:info@veramedhealth.com">info@veramedhealth.com</a>
+                  <a href="mailto:veramedhs@gmail.com">veramedhs@gmail.com</a>
                 </div>
               </div>
 

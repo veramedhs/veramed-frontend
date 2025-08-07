@@ -1,11 +1,7 @@
 import { create } from 'zustand';
 import { apiClient } from '@/lib/apiClient'; // Adjust path if needed
 
-/**
- * Defines the shape of the consultation form's state,
- * including loading status, success status, potential errors,
- * and the actions to manage the state.
- */
+
 interface ConsultationState {
   isLoading: boolean;
   isSuccess: boolean;
@@ -19,7 +15,7 @@ interface ConsultationState {
  */
 export const useConsultationStore = create<ConsultationState>((set) => ({
   // 1. Initial State
-  isLoading: false,
+  isLoading: false, 
   isSuccess: false,
   error: null,
 
@@ -29,14 +25,7 @@ export const useConsultationStore = create<ConsultationState>((set) => ({
     set({ isLoading: true, isSuccess: false, error: null });
 
     try {
-      // Make the API call using the pre-configured Axios client.
-      // The endpoint '/consultations/submit' is an example.
-      // Replace it with your actual backend endpoint.
-      await apiClient.post('/api/v1/veramed/contact', data,
-        {
-            
-        }
-      );
+      await apiClient.post('/api/v1/veramed/contact', data);
 
       // On successful API call, update the state
       set({ isLoading: false, isSuccess: true });

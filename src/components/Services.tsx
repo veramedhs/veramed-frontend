@@ -112,11 +112,11 @@ const Services = () => {
           </div>
         </div>
 
-        <div className="text-center mt-12">
+        {/* <div className="text-center mt-12">
           <Button variant="medical" size="lg">
             Explore All Services
           </Button>
-        </div>
+        </div> */}
       </div>
     </section>
   );

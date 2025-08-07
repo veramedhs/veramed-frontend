@@ -20,35 +20,37 @@ interface ServiceFormProps {
   serviceTitle?: string;
 }
 
-// ✅ A REUSABLE, ROBUST FILE INPUT COMPONENT
-// It works directly with File objects, making it clean and reliable.
+// ✅ UPDATED REUSABLE FILE INPUT COMPONENT FOR MULTIPLE FILES
 const FileInput = ({
   id,
   label,
-  file,
+  files,
   onFileChange,
   required = false,
 }: {
   id: string;
-  label: string;
-  file: File | null;
-  onFileChange: (file: File | null) => void;
+  label:string;
+  files: File[];
+  onFileChange: (files: File[]) => void;
   required?: boolean;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0] || null;
-    // You can add validation here if needed (size, type, etc.)
-    onFileChange(selectedFile);
+    const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
+    if (selectedFiles.length === 0) return;
+    
+    // Append new files to the existing list
+    onFileChange([...files, ...selectedFiles]);
+
+    // Reset the input so the onChange event fires again for the same file
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   };
 
-  const handleRemoveFile = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    onFileChange(null);
-    if (inputRef.current) {
-      inputRef.current.value = ""; // Reset the input field
-    }
+  const handleRemoveFile = (indexToRemove: number) => {
+    onFileChange(files.filter((_, index) => index !== indexToRemove));
   };
 
   return (
@@ -64,34 +66,42 @@ const FileInput = ({
         ref={inputRef}
         className="hidden"
         onChange={handleFileSelect}
-        accept=".pdf,.jpg,.jpeg,.png"
+        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+        multiple // Allow multiple files to be selected
       />
+      {/* UPLOAD AREA */}
       <div
         className="relative flex w-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 transition hover:border-gray-400 hover:bg-gray-50 cursor-pointer"
         onClick={() => inputRef.current?.click()}
       >
-        {!file ? (
-          <div className="text-center">
-            <UploadCloud className="mx-auto h-8 w-8 text-gray-400" />
-            <p className="mt-2 text-sm text-gray-600"><span className="font-semibold text-blue-600">Click to upload</span></p>
-            <p className="text-xs text-gray-500">PDF, JPG, PNG etc.</p>
-          </div>
-        ) : (
-          <div className="text-center">
-            <FileIcon className="mx-auto h-8 w-8 text-blue-500" />
-            <div className="mt-2 text-sm font-medium text-gray-700 break-all px-4">{file.name}</div>
-            <p className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(2)} KB</p>
-            <button
-              type="button"
-              onClick={handleRemoveFile}
-              className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-md transition hover:bg-red-600"
-              aria-label="Remove file"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        )}
+        <div className="text-center">
+          <UploadCloud className="mx-auto h-8 w-8 text-gray-400" />
+          <p className="mt-2 text-sm text-gray-600"><span className="font-semibold text-blue-600">Click to upload files</span></p>
+          <p className="text-xs text-gray-500">You can select multiple documents</p>
+        </div>
       </div>
+      
+      {/* FILES PREVIEW LIST */}
+      {files.length > 0 && (
+        <div className="mt-2 space-y-2">
+          {files.map((file, index) => (
+            <div key={index} className="flex items-center justify-between rounded-md border bg-muted/50 p-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <FileIcon className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
+                <span className="text-sm font-medium truncate min-w-0">{file.name}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleRemoveFile(index)}
+                className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-sm transition hover:bg-red-600"
+                aria-label={`Remove ${file.name}`}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -101,60 +111,36 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ serviceTitle }) => {
   const { isLoading, error, submitForm } = useServiceStore();
   const formRef = useRef<HTMLFormElement>(null);
 
-  // ✅ 1. THE STATE IS THE SOURCE OF TRUTH: We store the entire File object.
-  const [medicalReports, setMedicalReports] = useState<File | null>(null);
-  const [previousRecords, setPreviousRecords] = useState<File | null>(null);
-  const [attendantPassport, setAttendantPassport] = useState<File | null>(null);
-  const [patientPassport, setPatientPassport] = useState<File | null>(null);
+  // ✅ 1. STATE IS UPDATED TO HOLD ARRAYS OF FILES
+  const [medicalReports, setMedicalReports] = useState<File[]>([]);
+  const [previousRecords, setPreviousRecords] = useState<File[]>([]);
+  const [attendantPassport, setAttendantPassport] = useState<File[]>([]);
+  const [patientPassport, setPatientPassport] = useState<File[]>([]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!formRef.current) return;
 
-    // Validation using the state, which is the single source of truth.
-    if (serviceTitle?.includes("Treatment Planning") && !medicalReports) {
+    // ✅ 2. VALIDATION CHECKS THE ARRAY LENGTH
+    if (serviceTitle?.includes("Treatment Planning") && medicalReports.length === 0) {
       toast.error('Please attach your medical reports to proceed.');
       return;
     }
-    if (serviceTitle?.includes("Visa & Travel") && !patientPassport) {
+    if (serviceTitle?.includes("Visa & Travel") && patientPassport.length === 0) {
       toast.error("Please attach the patient's passport to proceed.");
       return;
     }
 
-    // ✅ 2. THE GOLDEN RULE: Build FormData manually.
-    const formData = new FormData();
-    const form = formRef.current;
+    const formData = new FormData(formRef.current);
+    
+    // ✅ 3. ITERATE AND APPEND FILES FOR EACH CATEGORY
+    medicalReports.forEach(file => formData.append('medicalReports[]', file));
+    previousRecords.forEach(file => formData.append('previousRecords[]', file));
+    patientPassport.forEach(file => formData.append('patientPassport[]', file));
+    attendantPassport.forEach(file => formData.append('attendantPassport[]', file));
 
-    // Append all text fields. This is safe even if some are not rendered.
-    if (form.patientName) formData.append('patientName', form.patientName.value);
-    if (form.email) formData.append('email', form.email.value);
-    if (form.countryCode) formData.append('countryCode', form.countryCode.value);
-    if (form.phone) formData.append('phone', form.phone.value);
-    if (form.message) formData.append('message', form.message.value);
-    if (form.medicalCondition) formData.append('medicalCondition', form.medicalCondition.value);
-    if (form.hospitalName) formData.append('hospitalName', form.hospitalName.value);
-    if (form.attendantName) formData.append('attendantName', form.attendantName.value);
-    if (form.relation) formData.append('relation', form.relation.value);
-
-    // ✅ 3. CONDITIONAL APPENDING: Only add files if they exist in the state.
-    if (medicalReports) formData.append('medicalReports', medicalReports);
-    if (previousRecords) formData.append('previousRecords', previousRecords);
-    if (patientPassport) formData.append('patientPassport', patientPassport);
-    if (attendantPassport) formData.append('attendantPassport', attendantPassport);
-
-    // Append the serviceTitle prop
     if (serviceTitle) formData.append('serviceTitle', serviceTitle);
-
-    // This log will now be accurate and clean.
-    console.log('Final FormData contents to be submitted:');
-    for (const pair of formData.entries()) {
-      if (pair[1] instanceof File) {
-        console.log(`${pair[0]}: [File] name=${pair[1].name}, size=${pair[1].size} bytes`);
-      } else {
-        console.log(`${pair[0]}: ${pair[1]}`);
-      }
-    }
 
     await submitForm(formData);
   };
@@ -178,19 +164,17 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ serviceTitle }) => {
 
         <div className="flex flex-col gap-2 md:flex-row" >
           <Select name="countryCode"  defaultValue="IN-+91" required    >
-
             <SelectTrigger className="w-full md:w-[130px]">
               <SelectValue placeholder="Code" /></SelectTrigger>
             <SelectContent>
               {countryData.map((country) => (
-  <SelectItem key={country.iso} value={`${country.iso}-+${country.code}`}>
-    {country.iso} (+{country.code})
-  </SelectItem>
-))}
-
+                <SelectItem key={country.iso} value={`${country.iso}-+${country.code}`}>
+                  {country.iso} (+{country.code})
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
-          <Input id="phone" name="phone" type="tel" placeholder="**********" required className="flex-1" />
+          <Input id="phone" name="phone" type="tel" placeholder="XXXXXXXXXX" required className="flex-1" />
         </div>
       </div>
     </>
@@ -204,14 +188,14 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ serviceTitle }) => {
           <Label htmlFor="medicalCondition">Medical Condition</Label>
           <Input id="medicalCondition" name="medicalCondition" placeholder="Describe your medical condition" required />
         </div>
-        <FileInput id="medicalReports" label="Attach Medical Reports" required file={medicalReports} onFileChange={setMedicalReports} />
+        <FileInput id="medicalReports" label="Attach Medical Reports" required files={medicalReports} onFileChange={setMedicalReports} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
         <div className="space-y-2">
           <Label htmlFor="hospitalName">Hospital Name</Label>
           <Input id="hospitalName" name="hospitalName" placeholder="Preferred hospital (optional)" />
         </div>
-        <FileInput id="previousRecords" label="Attach Previous Treatment Records" file={previousRecords} onFileChange={setPreviousRecords} />
+        <FileInput id="previousRecords" label="Attach Previous Treatment Records" files={previousRecords} onFileChange={setPreviousRecords} />
       </div>
     </div>
   );
@@ -230,11 +214,11 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ serviceTitle }) => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-        <FileInput id="attendantPassport" label="Attach Attendant Passport" file={attendantPassport} onFileChange={setAttendantPassport} />
-        <FileInput id="patientPassport" label="Attach Patient Passport" required file={patientPassport} onFileChange={setPatientPassport} />
+        <FileInput id="attendantPassport" label="Attach Attendant Passport" files={attendantPassport} onFileChange={setAttendantPassport} />
+        <FileInput id="patientPassport" label="Attach Patient Passport" required files={patientPassport} onFileChange={setPatientPassport} />
       </div>
       <div className="space-y-2 mt-4">
-        <FileInput id="medicalReports" label="Attach Medical Reports" file={medicalReports} onFileChange={setMedicalReports} />
+        <FileInput id="medicalReports" label="Attach Medical Reports" files={medicalReports} onFileChange={setMedicalReports} />
       </div>
     </div>
   );
@@ -247,7 +231,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ serviceTitle }) => {
   };
 
   return (
-    <Card className="p-8 shadow-card-medical bg-card border-4 border-medical rounded-2xl">
+    <Card className=" p-4 sm:p-8 shadow-card-medical bg-card border-4 border-medical rounded-2xl">
       <Toaster position="top-center" reverseOrder={false} />
       <form ref={formRef} onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 rounded-2xl p-0 sm:p-4" noValidate>
         {renderServiceSpecificFields()}

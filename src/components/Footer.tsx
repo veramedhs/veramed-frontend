@@ -10,6 +10,7 @@ import {
   Linkedin,
   Instagram
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -109,9 +110,9 @@ const Footer = () => {
             © 2025 Veramed Health Solutions. All rights reserved. | Founded by Shah Fahad
           </div>
           <div className="flex space-x-6 text-sm">
-            <a href="#" className="text-white/80 hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="text-white/80 hover:text-white transition-colors">Terms of Service</a>
-            <a href="#" className="text-white/80 hover:text-white transition-colors">Medical Disclaimer</a>
+            <Link to={"/privacy-policy"} className="text-white/80 hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to={"/terms-and-condition"} className="text-white/80 hover:text-white transition-colors">Terms of Service</Link>
+            <Link to={"/medical-desclaimar"} className="text-white/80 hover:text-white transition-colors">Medical Disclaimer</Link>
           </div>
         </div>
       </div>

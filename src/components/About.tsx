@@ -7,6 +7,7 @@ import {
   Calendar,
   MapPin
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const About = () => {
   return (
@@ -59,9 +60,11 @@ const About = () => {
               </div>
             </div>
 
+           <Link to={"/meet-out-team"}>
             <Button variant="medical" size="lg">
               Meet Our Team
             </Button>
+           </Link>
           </div>
 
           {/* Right Content - Stats Cards */}

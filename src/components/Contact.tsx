@@ -1,7 +1,15 @@
+import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Phone,
   Mail,
@@ -13,7 +21,38 @@ import {
   Globe
 } from "lucide-react";
 
+// Assuming you have a country data file like this
+// You should create this file: src/lib/data/countries.js
+import { countryData } from "@/lib/data/countries";
+
 const Contact = () => {
+  // State to manage form inputs
+  const [formData, setFormData] = useState({
+    fullName: '',
+    countryCode: '+91', // Default to India
+    phone: '',
+    email: '',
+    preferredCountry: '',
+    medicalCondition: '',
+    additionalInfo: '',
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCountryCodeChange = (value) => {
+    setFormData(prev => ({ ...prev, countryCode: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic, e.g., send data to an API
+    console.log('Form Submitted:', formData);
+    // You would typically use a library like Axios to post this data
+  };
+
   return (
     <section id="contact" className="py-20 bg-background">
       <div className="container mx-auto px-4">
@@ -31,7 +70,7 @@ const Contact = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
           {/* Contact Information */}
           <div className="lg:col-span-1 space-y-6">
-            <Card className="p-6 hover:shadow-card-medical transition-all duration-300">
+             <Card className="p-6 hover:shadow-card-medical transition-all duration-300">
               <div className="flex items-center space-x-4 mb-4">
                 <div className="p-3 bg-gradient-primary rounded-lg">
                   <Phone className="w-6 h-6 text-white" />
@@ -99,20 +138,53 @@ const Contact = () => {
                 Get Your Free Consultation
               </h3>
 
-              <form className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Full Name *
                     </label>
-                    <Input placeholder="Enter your full name" />
+                    <Input
+                      name="fullName"
+                      placeholder="Enter your full name"
+                      value={formData.fullName}
+                      onChange={handleInputChange}
+                      required
+                    />
                   </div>
+                  {/* === UPDATED PHONE INPUT === */}
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Phone Number *
                     </label>
-                    <Input placeholder="+91 XXXXXXXXXX" />
+                    <div className="flex items-center gap-2">
+                      <Select
+                        defaultValue="+91"
+                        onValueChange={handleCountryCodeChange}
+                      >
+                        <SelectTrigger className="w-[130px]">
+                          <SelectValue placeholder="Code" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countryData.map((country) => (
+                            <SelectItem key={country.iso} value={`+${country.code}`}>
+                              {country.iso} (+{country.code})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        name="phone"
+                        type="tel"
+                        placeholder="XXXXXXXXXX"
+                        className="flex-1"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
                   </div>
+                  {/* ========================== */}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -120,13 +192,25 @@ const Contact = () => {
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Email Address *
                     </label>
-                    <Input type="email" placeholder="your.email@example.com" />
+                    <Input
+                      name="email"
+                      type="email"
+                      placeholder="your.email@example.com"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Preferred Country
                     </label>
-                    <Input placeholder="e.g., Singapore, Thailand, India" />
+                    <Input
+                      name="preferredCountry"
+                      placeholder="e.g., Singapore, Thailand, India"
+                      value={formData.preferredCountry}
+                      onChange={handleInputChange}
+                    />
                   </div>
                 </div>
 
@@ -134,7 +218,13 @@ const Contact = () => {
                   <label className="block text-sm font-medium text-foreground mb-2">
                     Medical Condition / Treatment Required *
                   </label>
-                  <Input placeholder="Brief description of medical condition or treatment needed" />
+                  <Input
+                    name="medicalCondition"
+                    placeholder="Brief description of medical condition or treatment needed"
+                    value={formData.medicalCondition}
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
 
                 <div>
@@ -142,17 +232,20 @@ const Contact = () => {
                     Additional Information
                   </label>
                   <Textarea
-                    placeholder="Please provide any additional details about your medical history, preferences, or questions..."
+                    name="additionalInfo"
+                    placeholder="Please provide any additional details..."
                     rows={4}
+                    value={formData.additionalInfo}
+                    onChange={handleInputChange}
                   />
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button variant="medical" className="flex-1 group">
+                  <Button type="submit" variant="medical" className="flex-1 group">
                     <Send className="w-4 h-4 mr-2 group-hover:translate-x-1 transition-transform" />
                     Send Consultation Request
                   </Button>
-                  <Button variant="outline" className="flex-1">
+                  <Button type="button" variant="outline" className="flex-1">
                     <Calendar className="w-4 h-4 mr-2" />
                     Schedule Call Back
                   </Button>
@@ -161,8 +254,7 @@ const Contact = () => {
             </Card>
           </div>
         </div>
-
-        {/* Quick Actions */}
+         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="p-6 text-center hover:shadow-card-medical transition-all duration-300 hover:-translate-y-1 group cursor-pointer">
             <div className="p-4 bg-gradient-primary rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">

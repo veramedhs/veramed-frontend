@@ -14,6 +14,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Header from "./components/Header";
 import StartYourJourney from "./pages/StartYourJourney";
+import Team from "./pages/TeamPage";
+import TermsAndConditionPage from "./pages/TermsAndConditionPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import MedicalDisclaimerPage from "./pages/MedicalDisclaimer";
+import PatientGalleryPage from "./pages/PetientsGallery";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +36,12 @@ const App = () => (
           <Route path="/services" element={<Services />} />
           <Route path="/servicedetails/:serviceId" element={<ServiceDetail />} />
           <Route path="/start-your-journey" element={<StartYourJourney />} />
+          <Route path="/meet-out-team" element={<Team />} />
+          <Route path="/terms-and-condition" element={<TermsAndConditionPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/medical-desclaimar" element={<MedicalDisclaimerPage />} />
+          <Route path="/patients-gallery" element={<PatientGalleryPage />} />
+
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

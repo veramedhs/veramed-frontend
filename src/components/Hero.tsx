@@ -1,79 +1,76 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Shield, Globe, Heart } from "lucide-react";
-import heroImage from "@/assets/medical-hero.jpg";
 import { Link } from "react-router-dom";
+import heroImg from "@/assets/hero.png"
+import heroImgPhone from "@/assets/hero-mobile.png"
+
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0">
-        <img
-          src={heroImage}
-          alt="Medical Tourism Excellence"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-medical-blue/90 via-medical-blue/80 to-medical-teal/90"></div>
-      </div>
+    <section className="bg-white dark:bg-gray-900">
+      <div className="container mx-auto px-6 py-16">
+        <div className="flex flex-col lg:flex-row items-center">
+          {/* Left Side: Content */}
+          <div className="lg:w-1/2 lg:pr-12">
+            <div className="flex items-center space-x-4 mb-4">
+              <div className="p-2 bg-blue-100 dark:bg-blue-800/20 rounded-full">
+                <Globe className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="p-2 bg-red-100 dark:bg-red-800/20 rounded-full">
+                <Heart className="w-6 h-6 text-red-600 dark:text-red-400" />
+              </div>
+              <div className="p-2 bg-green-100 dark:bg-green-800/20 rounded-full">
+                <Shield className="w-6 h-6 text-green-600 dark:text-green-400" />
+              </div>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white leading-tight">
+              Your Gateway to
+              <span className="block text-blue-600 dark:text-blue-400">
+                Global Healthcare
+              </span>
+            </h1>
 
-      {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 text-center text-white">
-        <div className="max-w-4xl mx-auto animate-fade-in">
-          <div className="flex justify-center mb-6">
-            <div className="flex items-center space-x-4 mb-6">
-              <div className="p-3 bg-white/10 rounded-full backdrop-blur-sm">
-                <Globe className="w-8 h-8" />
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
+              Facilitating world-class medical treatments abroad with comprehensive support,
+              expert guidance, and personalized care since 2016.
+            </p>
+
+            <div className="mt-8">
+              <Link to={"/start-your-journey"}>
+                <Button size="lg" className="group">
+                  Start Your Journey
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </div>
+
+            <div className="mt-12 grid grid-cols-3 gap-6 text-center">
+              <div>
+                <div className="text-3xl font-bold text-gray-800 dark:text-white">8+</div>
+                <div className="text-gray-500 dark:text-gray-400">Years of Excellence</div>
               </div>
-              <div className="p-3 bg-white/10 rounded-full backdrop-blur-sm">
-                <Heart className="w-8 h-8" />
+              <div>
+                <div className="text-3xl font-bold text-gray-800 dark:text-white">5000+</div>
+                <div className="text-gray-500 dark:text-gray-400">Patients Served</div>
               </div>
-              <div className="p-3 bg-white/10 rounded-full backdrop-blur-sm">
-                <Shield className="w-8 h-8" />
+              <div>
+                <div className="text-3xl font-bold text-gray-800 dark:text-white">15+</div>
+                <div className="text-gray-500 dark:text-gray-400">Partner Countries</div>
               </div>
             </div>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            Your Gateway to
-            <span className="block bg-gradient-to-r from-white to-medical-light bg-clip-text text-transparent">
-              Global Healthcare
-            </span>
-          </h1>
+          {/* Right Side: Image */}
+          <div className="lg:w-1/2 mt-12 lg:mt-0">
+            <div className="relative w-full h-96 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-lg overflow-hidden">
+              <img src={heroImg} className="hidden sm:block w-full h-full object-cover" alt="Veramed health solution" />
+              <img src={heroImgPhone} className="block sm:hidden w-full h-full object-cover" alt="Veramed health solution" />
 
-          <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto leading-relaxed text-white/90">
-            Facilitating world-class medical treatments abroad with comprehensive support,
-            expert guidance, and personalized care since 2016.
-          </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Link to={"/start-your-journey"}>
-              <Button variant="hero" className="group">
-                Start Your Journey
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-            <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-              <div className="text-3xl font-bold mb-2">8+</div>
-              <div className="text-white/80">Years of Excellence</div>
-            </div>
-            <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-              <div className="text-3xl font-bold mb-2">5000+</div>
-              <div className="text-white/80">Patients Served</div>
-            </div>
-            <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-              <div className="text-3xl font-bold mb-2">15+</div>
-              <div className="text-white/80">Partner Countries</div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Floating Elements */}
-      <div className="absolute top-20 left-10 w-20 h-20 bg-white/5 rounded-full animate-pulse hidden lg:block"></div>
-      <div className="absolute bottom-20 right-10 w-32 h-32 bg-white/5 rounded-full animate-pulse hidden lg:block"></div>
     </section>
   );
 };

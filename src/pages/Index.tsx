@@ -7,6 +7,7 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import OurCollaboration from "@/components/ui/OurCollabration";
 import BlogSection from "@/components/BlogSection";
+import Testimonials from "@/components/Testimonials";
 
 const Index = () => {
   return (
@@ -18,7 +19,7 @@ const Index = () => {
       <OurCollaboration />
       <WhyChooseUs />
       
-
+      <Testimonials/>
 
       <Contact />
       <Footer />

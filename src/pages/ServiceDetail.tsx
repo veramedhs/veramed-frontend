@@ -2,6 +2,8 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import ServiceForm from "../components/ServiceForm";
 import { CheckCircle } from "lucide-react";
+import serviceImg from "@/assets/serviceSection.jpeg"
+
 
 const serviceData: Record<
   string,
@@ -104,9 +106,11 @@ const ServiceDetail: React.FC = () => {
           </p>
         </div>
 
-        {/* What's Included & More Info */}
+
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          <div className="md:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+          {/* Included Card */}
+          <div className="bg-white p-6 rounded-lg shadow-sm">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               What’s Included
             </h2>
@@ -120,6 +124,16 @@ const ServiceDetail: React.FC = () => {
             </ul>
           </div>
 
+          {/* Image in the middle */}
+          <div className="rounded-xl overflow-hidden shadow-lg">
+            <img
+              src={serviceImg}
+              alt="Our Medical Tourism Services"
+              className="w-full h-full object-fill"
+            />
+          </div>
+
+          {/* More Info Card */}
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               More Information
@@ -128,12 +142,6 @@ const ServiceDetail: React.FC = () => {
           </div>
         </div>
 
-        {/* Quote */}
-        <div className="text-center mb-12">
-          <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-800 p-6 rounded-lg max-w-2xl mx-auto">
-            <p className="text-xl italic font-medium">“{service.quote}”</p>
-          </div>
-        </div>
 
         {/* Shared Form */}
         <div className="bg-white p-8 rounded-lg shadow-md">

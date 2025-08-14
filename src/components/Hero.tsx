@@ -1,14 +1,60 @@
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Shield, Globe, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroImg from "@/assets/hero.png"
-import heroImgPhone from "@/assets/hero-mobile.png"
-
+import heroImg from "@/assets/hero.png";
+import heroImgPhone from "@/assets/hero-mobile.png";
 
 const Hero = () => {
+  const [years, setYears] = useState(1);
+  const [patients, setPatients] = useState(1);
+  const [countries, setCountries] = useState(1);
+
+  useEffect(() => {
+    const yearsTarget = 8;
+    const patientsTarget = 5000;
+    const countriesTarget = 15;
+
+    const yearsInterval = setInterval(() => {
+      setYears((prev) => {
+        if (prev >= yearsTarget) {
+          clearInterval(yearsInterval);
+          return yearsTarget;
+        }
+        return prev + 1;
+      });
+    }, 100);
+
+    const patientsInterval = setInterval(() => {
+      setPatients((prev) => {
+        if (prev >= patientsTarget) {
+          clearInterval(patientsInterval);
+          return patientsTarget;
+        }
+        return prev + 50;
+      });
+    }, 1);
+
+    const countriesInterval = setInterval(() => {
+      setCountries((prev) => {
+        if (prev >= countriesTarget) {
+          clearInterval(countriesInterval);
+          return countriesTarget;
+        }
+        return prev + 1;
+      });
+    }, 100);
+
+    return () => {
+      clearInterval(yearsInterval);
+      clearInterval(patientsInterval);
+      clearInterval(countriesInterval);
+    };
+  }, []);
+
   return (
     <section className="bg-white dark:bg-gray-900">
-      <div className="container mx-auto px-6 py-16">
+      <div className="container mx-auto pt-5 px-6 py-16">
         <div className="flex flex-col lg:flex-row items-center">
           {/* Left Side: Content */}
           <div className="lg:w-1/2 lg:pr-12">
@@ -45,16 +91,22 @@ const Hero = () => {
             </div>
 
             <div className="mt-12 grid grid-cols-3 gap-6 text-center">
-              <div>
-                <div className="text-3xl font-bold text-gray-800 dark:text-white">8+</div>
+              <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow">
+                <div className="text-xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                  {years}+
+                </div>
                 <div className="text-gray-500 dark:text-gray-400">Years of Excellence</div>
               </div>
-              <div>
-                <div className="text-3xl font-bold text-gray-800 dark:text-white">5000+</div>
+              <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow">
+                <div className="text-xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                  {patients}+
+                </div>
                 <div className="text-gray-500 dark:text-gray-400">Patients Served</div>
               </div>
-              <div>
-                <div className="text-3xl font-bold text-gray-800 dark:text-white">15+</div>
+              <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow">
+                <div className="text-xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                  {countries}+
+                </div>
                 <div className="text-gray-500 dark:text-gray-400">Partner Countries</div>
               </div>
             </div>
@@ -63,10 +115,16 @@ const Hero = () => {
           {/* Right Side: Image */}
           <div className="lg:w-1/2 mt-12 lg:mt-0">
             <div className="relative w-full h-96 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-lg overflow-hidden">
-              <img src={heroImg} className="hidden sm:block w-full h-full object-cover" alt="Veramed health solution" />
-              <img src={heroImgPhone} className="block sm:hidden w-full h-full object-cover" alt="Veramed health solution" />
-
-
+              <img
+                src={heroImg}
+                className="hidden sm:block w-full h-full object-cover"
+                alt="Veramed health solution"
+              />
+              <img
+                src={heroImgPhone}
+                className="block sm:hidden w-full h-full object-cover"
+                alt="Veramed health solution"
+              />
             </div>
           </div>
         </div>

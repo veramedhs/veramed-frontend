@@ -6,10 +6,18 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Phone, Mail, Menu, X } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  Menu,
+  X,
+  Calendar,
+  User,
+  MessageCircleMore,
+} from "lucide-react";
 import ConsultationForm from "./ConsultationModal";
 
-// A custom NavLink component to handle smooth scrolling on the homepage
+// Custom NavLink for smooth scrolling on homepage
 const NavLink = ({
   to,
   hash,
@@ -27,12 +35,10 @@ const NavLink = ({
   const isHomePage = location.pathname === "/";
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (onClick) {
-      onClick();
-    }
+    if (onClick) onClick();
     if (isHomePage && hash) {
       e.preventDefault();
-      document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' });
+      document.querySelector(hash)?.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -43,20 +49,18 @@ const NavLink = ({
       </a>
     );
   }
-  // Fallback to react-router-dom Link for other pages
+
   return (
-    <Link to={`/${hash || ''}`} className={className} onClick={onClick}>
+    <Link to={`/${hash || ""}`} className={className} onClick={onClick}>
       {children}
     </Link>
   );
 };
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  // State to explicitly control the Dialog's open/closed status
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Effect to close the mobile menu on window resize
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -67,32 +71,32 @@ const Header = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Effect to toggle body scroll when the mobile menu is open
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "auto";
   }, [isMenuOpen]);
 
   return (
-    // The Dialog component is now controlled by our state
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <header className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
-            <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+            <Link
+              to="/"
+              className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            >
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">V</span>
               </div>
               <div>
-                <h1 className="text-md sm:text-xl font-bold text-foreground">
+                <h1 className="text-md sm:text-l font-bold text-foreground">
                   Veramed Health Solutions
                 </h1>
                 <p className="text-xs text-muted-foreground">
-                  Medical Tourism Excellence
+                  Medical Tourism India
                 </p>
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
               <NavLink to="/" hash="#services" className="text-foreground hover:text-primary transition-colors">Services</NavLink>
               <NavLink to="/" hash="#about" className="text-foreground hover:text-primary transition-colors">About</NavLink>
@@ -108,14 +112,12 @@ const Header = () => {
                 <a href="tel:+91-9953306560" className="text-sm hover:text-primary transition-colors">+91-9953306560</a>
               </div>
 
-              {/* Desktop Trigger for the Dialog */}
               <DialogTrigger asChild>
                 <Button variant="medical" className="hidden md:block">
                   Get Second Opinion
                 </Button>
               </DialogTrigger>
 
-              {/* Mobile Menu Toggle */}
               <button className="md:hidden ml-4" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu">
                 {isMenuOpen ? <X /> : <Menu />}
               </button>
@@ -123,13 +125,7 @@ const Header = () => {
           </div>
 
           {/* Mobile Menu */}
-          <div
-            className={`absolute left-0 w-full bg-background shadow-lg md:hidden transition-all duration-300 ease-in-out ${
-              isMenuOpen
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 -translate-y-full pointer-events-none"
-            }`}
-          >
+          <div className={`absolute left-0 w-full bg-background shadow-lg md:hidden transition-all duration-300 ease-in-out ${isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"}`}>
             <div className="container mx-auto px-4 py-8">
               <nav className="flex flex-col space-y-6 text-center">
                 <NavLink to="/" hash="#services" className="text-lg text-foreground hover:text-primary" onClick={() => setIsMenuOpen(false)}>Services</NavLink>
@@ -150,7 +146,6 @@ const Header = () => {
                 </div>
               </div>
 
-              {/* Mobile Trigger for the Dialog. Closes the menu first. */}
               <DialogTrigger asChild>
                 <Button variant="medical" className="w-full mt-8" onClick={() => setIsMenuOpen(false)}>
                   Get Second Opinion
@@ -160,10 +155,33 @@ const Header = () => {
           </div>
         </div>
       </header>
-      
-      {/* The Dialog's content is rendered here */}
+
+      {/* Mobile Bottom Navigation Bar */}
+      <div className="fixed bottom-0 inset-x-0 bg-white border-t shadow-md flex justify-around items-center py-2 z-50 md:hidden">
+        <Link to="/#doctors" className="flex flex-col items-center text-xs text-muted-foreground hover:text-primary">
+          <User className="h-5 w-5" />
+          Doctors
+        </Link>
+        <Link to="/#book" className="flex flex-col items-center text-xs text-muted-foreground hover:text-primary">
+          <Calendar className="h-5 w-5" />
+          Book Appt
+        </Link>
+        <a href="https://wa.me/919953306560" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center text-xs text-muted-foreground hover:text-primary">
+          <MessageCircleMore className="h-5 w-5" />
+          Chat
+        </a>
+        <a href="tel:+919953306560" className="flex flex-col items-center text-xs text-muted-foreground hover:text-primary">
+          <Phone className="h-5 w-5" />
+          Call Us
+        </a>
+        <button className="flex flex-col items-center text-xs text-muted-foreground hover:text-primary" onClick={() => setIsMenuOpen(true)}>
+          <Menu className="h-5 w-5" />
+          Menu
+        </button>
+      </div>
+
+      {/* Modal Dialog Content */}
       <DialogContent className="sm:max-w-[480px] p-0 border-none">
-        {/* We pass the onSuccess callback to the form */}
         <ConsultationForm onSuccess={() => setIsModalOpen(false)} />
       </DialogContent>
     </Dialog>

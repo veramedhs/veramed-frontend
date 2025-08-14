@@ -2,9 +2,10 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import ServiceForm from "../components/ServiceForm";
 import { CheckCircle } from "lucide-react";
-import serviceImg from "@/assets/serviceSection.jpeg"
-
-
+import serviceImg from "@/assets/serviceSection.jpeg";
+import visaImg from "@/assets/visa1.jpeg";
+import treatmentImg from "@/assets/p&t1.png"; 
+import languageImg from "@/assets/c&l.jpeg"; 
 const serviceData: Record<
   string,
   {
@@ -106,8 +107,6 @@ const ServiceDetail: React.FC = () => {
           </p>
         </div>
 
-
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           {/* Included Card */}
           <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -124,11 +123,19 @@ const ServiceDetail: React.FC = () => {
             </ul>
           </div>
 
-          {/* Image in the middle */}
+          {/* Conditional Image */}
           <div className="rounded-xl overflow-hidden shadow-lg">
             <img
-              src={serviceImg}
-              alt="Our Medical Tourism Services"
+              src={
+                serviceId === "visa-travel"
+                  ? visaImg
+                  : serviceId === "treatment-planning"
+                  ? treatmentImg
+                  : serviceId === "language-support"
+                  ? languageImg
+                  : serviceImg
+              }
+              alt="Service Visual"
               className="w-full h-full object-fill"
             />
           </div>
@@ -141,7 +148,6 @@ const ServiceDetail: React.FC = () => {
             <p className="text-gray-700 leading-relaxed">{service.moreInfo}</p>
           </div>
         </div>
-
 
         {/* Shared Form */}
         <div className="bg-white p-8 rounded-lg shadow-md">

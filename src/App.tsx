@@ -19,6 +19,7 @@ import TermsAndConditionPage from "./pages/TermsAndConditionPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import MedicalDisclaimerPage from "./pages/MedicalDisclaimer";
 import PatientGalleryPage from "./pages/PetientsGallery";
+import LeaveReviewPage from "./pages/LeaveReviewPage";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,8 @@ const App = () => (
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/medical-desclaimar" element={<MedicalDisclaimerPage />} />
           <Route path="/patients-gallery" element={<PatientGalleryPage />} />
+          <Route path="/leave-review" element={<LeaveReviewPage />} />
+
 
         </Routes>
       </BrowserRouter>

@@ -104,6 +104,8 @@ const Header = () => {
               <NavLink to="/" hash="#why-us" className="text-foreground hover:text-primary transition-colors">Why Choose Us</NavLink>
               <NavLink to="/" hash="#contact" className="text-foreground hover:text-primary transition-colors">Contact</NavLink>
               <Link to="/blog" className="text-foreground hover:text-primary transition-colors">Blog</Link>
+              <Link to="/leave-review" className="text-foreground hover:text-primary transition-colors">Leave a Review</Link>
+
             </nav>
 
             <div className="flex items-center">
@@ -134,6 +136,7 @@ const Header = () => {
                 <NavLink to="/" hash="#why-us" className="text-lg text-foreground hover:text-primary" onClick={() => setIsMenuOpen(false)}>Why Choose Us</NavLink>
                 <NavLink to="/" hash="#contact" className="text-lg text-foreground hover:text-primary" onClick={() => setIsMenuOpen(false)}>Contact</NavLink>
                 <Link to="/blog" className="text-lg text-foreground hover:text-primary" onClick={() => setIsMenuOpen(false)}>Blog</Link>
+                <Link to="/leave-review" className="text-lg text-foreground hover:text-primary" onClick={() => setIsMenuOpen(false)}>Leave a Review</Link>
               </nav>
               <div className="mt-8 pt-6 border-t border-border flex flex-col items-center space-y-4 text-sm text-muted-foreground">
                 <div className="flex items-center space-x-2">

@@ -161,10 +161,10 @@ const Header = () => {
 
       {/* Mobile Bottom Navigation Bar */}
       <div className="fixed bottom-0 inset-x-0 bg-white border-t shadow-md flex justify-around items-center py-2 z-50 md:hidden">
-        <Link to="/#doctors" className="flex flex-col items-center text-xs text-muted-foreground hover:text-primary">
+        <a target="_blank" href="https://mymedicalassitant.com/find-doctor" className="flex flex-col items-center text-xs text-muted-foreground hover:text-primary">
           <User className="h-5 w-5" />
           Doctors
-        </Link>
+        </a>
         <Link to="/#book" className="flex flex-col items-center text-xs text-muted-foreground hover:text-primary">
           <Calendar className="h-5 w-5" />
           Book Appt

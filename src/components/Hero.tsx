@@ -77,8 +77,7 @@ const Hero = () => {
             </h1>
 
             <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-              Facilitating world-class medical treatments abroad with comprehensive support,
-              expert guidance, and personalized care since 2016.
+              Veramed Group partners with India’s accredited hospitals to deliver safe, affordable, and world-class medical care — built on expertise, compassion, and trust since 2016
             </p>
 
             <div className="mt-8">

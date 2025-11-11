@@ -15,14 +15,7 @@ export const useServiceStore = create<ServiceFormState>((set) => ({
   submitForm: async (formData) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await apiClient.post('/api/v1/veramed/services', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      console.log('Form submitted successfully:', response.data);
-      toast.success('🎉 Service request submitted successfully!');
+      const response = await apiClient.post('/api/v1/veramed/services',formData);
       set({ isLoading: false });
       return true;
     } catch (error: any) {

@@ -11,8 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { Upload, X, File as FileIcon, Loader2 } from "lucide-react";
 import { useConsultationStore } from "@/store/consultationStore";
-
-// ✅ 1. IMPORT SELECT COMPONENTS AND COUNTRY DATA
 import {
   Select,
   SelectContent,
@@ -20,16 +18,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { countryData } from "@/lib/data/countries"; // Make sure this path is correct for your project
+import { countryData } from "@/lib/data/countries";
 
-// Define allowed file types for validation and the input's accept attribute
+// --- Allowed File Types ---
 const ALLOWED_FILE_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
   "application/pdf",
-  "application/msword", // .doc
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
 const ACCEPTED_FILES_STRING = ".png, .jpg, .jpeg, .pdf, .doc, .docx";
 
@@ -37,23 +35,24 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const { isLoading, isSuccess, error, submitConsultation, reset } =
     useConsultationStore();
 
-  // ✅ 2. UPDATE STATE FOR PHONE NUMBER
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [countryCode, setCountryCode] = useState("+91"); // New state for country code
-  const [phone, setPhone] = useState(""); // This now holds only the number
+  const [countryCode, setCountryCode] = useState("+91");
+  const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [attachments, setAttachments] = useState<File[]>([]);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // --- Regex Pattern for Full Name ---
+  const fullNameRegex = /^[A-Za-z\s.'-]{2,50}$/;
+
+  // --- Reset After Submission ---
   useEffect(() => {
     if (isSuccess) {
       toast.success("Request sent successfully!");
       setFullName("");
-      setEmail("");
       setPhone("");
-      setCountryCode("+91"); // Reset country code on success
+      setCountryCode("+91");
       setMessage("");
       handleRemoveAllFiles();
       onSuccess?.();
@@ -65,12 +64,10 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
     }
   }, [isSuccess, error, reset, onSuccess]);
 
+  // --- Handle File Upload ---
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
-
-    if (!selectedFiles) {
-      return;
-    }
+    if (!selectedFiles) return;
 
     const newFiles = Array.from(selectedFiles);
     const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
@@ -84,7 +81,7 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
       }
 
       if (file.size > maxSizeInBytes) {
-        toast.error(`File size exceeds the 10MB limit: ${file.name}.`);
+        toast.error(`File size exceeds 10MB: ${file.name}.`);
         continue;
       }
 
@@ -111,24 +108,36 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const handleRemoveAllFiles = () => {
     setAttachments([]);
     setFilePreviews([]);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  // --- Form Submit with Validation ---
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isLoading) return;
 
+    const trimmedFullName = fullName.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedMessage = message.trim();
+
+    // Validate Full Name
+    if (!trimmedFullName) return toast.error("Please enter your full name.");
+    if (!fullNameRegex.test(trimmedFullName))
+      return toast.error("Please enter a valid full name (letters only).");
+
+    // Validate Phone
+    if (!trimmedPhone) return toast.error("Please enter your phone number.");
+    if (trimmedPhone.length < 5 || trimmedPhone.length > 15)
+      return toast.error("Please enter a valid phone number.");
+
+    // Prepare Data
     const formData = new FormData();
-    formData.append("fullName", fullName);
-    formData.append("email", email);
-    // ✅ 3. COMBINE COUNTRY CODE AND PHONE ON SUBMIT
-    formData.append("phone", `${countryCode}${phone}`);
-    formData.append("message", message);
-    attachments.forEach((attachment) => {
-      formData.append("attachments[]", attachment);
-    });
+    formData.append("fullName", trimmedFullName);
+    formData.append("phone", `${countryCode}${trimmedPhone}`);
+    formData.append("message", trimmedMessage);
+    formData.append("email", "dumy@gmail.com");
+
+    attachments.forEach((file) => formData.append("attachments[]", file));
 
     await submitConsultation(formData);
   };
@@ -146,32 +155,22 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 
       <div className="px-6 pb-6">
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* ✅ Full Name */}
           <div className="space-y-2">
             <Label htmlFor="fullName">Full Name</Label>
             <Input
               id="fullName"
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={(e) =>
+                setFullName(e.target.value.replace(/[^A-Za-z\s.'-]/g, ""))
+              }
               placeholder="John Doe"
               required
               disabled={isLoading}
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-              disabled={isLoading}
-            />
-          </div>
-
-          {/* ✅ 4. UPDATED PHONE NUMBER FIELD WITH DROPDOWN */}
+          {/* ✅ Phone + Country Code */}
           <div className="space-y-2">
             <Label htmlFor="phone">Phone Number</Label>
             <div className="flex items-center gap-2">
@@ -191,12 +190,17 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
                   ))}
                 </SelectContent>
               </Select>
+
               <Input
                 id="phone"
                 type="tel"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="XXXXXXXXXX"
+                onChange={(e) =>
+                  setPhone(e.target.value.replace(/\D/g, ""))
+                }
+                placeholder="Enter mobile number"
                 required
                 disabled={isLoading}
                 className="flex-1"
@@ -204,6 +208,7 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
             </div>
           </div>
 
+          {/* ✅ Message */}
           <div className="space-y-2">
             <Label htmlFor="message">Message</Label>
             <Textarea
@@ -216,15 +221,13 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
             />
           </div>
 
+          {/* ✅ File Upload */}
           <div className="space-y-2">
             <Label htmlFor="attachment">Upload Medical Documents (Optional)</Label>
             {attachments.length > 0 ? (
               <div className="w-full p-3 space-y-3 border rounded-lg border-border">
                 {attachments.map((attachment, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between"
-                  >
+                  <div key={index} className="flex items-center justify-between">
                     <div className="flex items-center gap-3 min-w-0">
                       {filePreviews[index] ? (
                         <img
@@ -290,6 +293,7 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
             )}
           </div>
 
+          {/* ✅ Submit */}
           <Button
             type="submit"
             variant="medical"

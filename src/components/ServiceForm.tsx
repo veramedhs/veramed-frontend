@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { countryData } from '../lib/data/countries';
+import React, { useState, useRef } from "react";
+import { countryData } from "../lib/data/countries";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,17 +10,26 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/components/ui/select";
-import { useServiceStore } from '@/store/serviceStore';
-import { UploadCloud, File as FileIcon, X } from 'lucide-react';
-import toast, { Toaster } from 'react-hot-toast';
+import { useServiceStore } from "@/store/serviceStore";
+import { UploadCloud, File as FileIcon, X } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 interface ServiceFormProps {
   serviceTitle?: string;
 }
 
-// ✅ UPDATED REUSABLE FILE INPUT COMPONENT FOR MULTIPLE FILES
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const ALLOWED_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+
+// ✅ FILE INPUT COMPONENT
 const FileInput = ({
   id,
   label,
@@ -29,7 +38,7 @@ const FileInput = ({
   required = false,
 }: {
   id: string;
-  label:string;
+  label: string;
   files: File[];
   onFileChange: (files: File[]) => void;
   required?: boolean;
@@ -38,63 +47,71 @@ const FileInput = ({
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
-    if (selectedFiles.length === 0) return;
-    
-    // Append new files to the existing list
-    onFileChange([...files, ...selectedFiles]);
+    if (!selectedFiles.length) return;
 
-    // Reset the input so the onChange event fires again for the same file
-    if (inputRef.current) {
-      inputRef.current.value = "";
+    const validFiles: File[] = [];
+
+    for (const file of selectedFiles) {
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        toast.error(
+          `Invalid file: ${file.name}. Allowed types: JPG, PNG, PDF, DOC, DOCX`
+        );
+        continue;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error(`File too large: ${file.name} (max 10MB)`);
+        continue;
+      }
+      validFiles.push(file);
     }
+
+    if (validFiles.length) onFileChange([...files, ...validFiles]);
+    if (inputRef.current) inputRef.current.value = "";
   };
 
-  const handleRemoveFile = (indexToRemove: number) => {
-    onFileChange(files.filter((_, index) => index !== indexToRemove));
+  const handleRemoveFile = (index: number) => {
+    onFileChange(files.filter((_, i) => i !== index));
   };
 
   return (
     <div className="space-y-2">
-      <Label htmlFor={id} className="font-medium">
+      <Label htmlFor={id}>
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </Label>
       <input
         type="file"
-        id={id}
-        name={id}
         ref={inputRef}
         className="hidden"
-        onChange={handleFileSelect}
+        id={id}
         accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-        multiple // Allow multiple files to be selected
+        onChange={handleFileSelect}
+        multiple
       />
-      {/* UPLOAD AREA */}
       <div
-        className="relative flex w-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 transition hover:border-gray-400 hover:bg-gray-50 cursor-pointer"
         onClick={() => inputRef.current?.click()}
+        className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition"
       >
-        <div className="text-center">
-          <UploadCloud className="mx-auto h-8 w-8 text-gray-400" />
-          <p className="mt-2 text-sm text-gray-600"><span className="font-semibold text-blue-600">Click to upload files</span></p>
-          <p className="text-xs text-gray-500">You can select multiple documents</p>
-        </div>
+        <UploadCloud className="w-8 h-8 text-blue-500" />
+        <p className="text-sm font-medium mt-2">Click to upload or drag files</p>
+        <p className="text-xs text-gray-500">JPG, PNG, PDF, DOC (max 10MB)</p>
       </div>
-      
-      {/* FILES PREVIEW LIST */}
+
       {files.length > 0 && (
-        <div className="mt-2 space-y-2">
-          {files.map((file, index) => (
-            <div key={index} className="flex items-center justify-between rounded-md border bg-muted/50 p-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <FileIcon className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
-                <span className="text-sm font-medium truncate min-w-0">{file.name}</span>
+        <div className="mt-3 space-y-2">
+          {files.map((file, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between bg-gray-50 border border-gray-200 p-2 rounded-md"
+            >
+              <div className="flex items-center gap-2 truncate">
+                <FileIcon className="h-5 w-5 text-gray-500" />
+                <span className="text-sm truncate">{file.name}</span>
               </div>
               <button
                 type="button"
-                onClick={() => handleRemoveFile(index)}
-                className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-sm transition hover:bg-red-600"
-                aria-label={`Remove ${file.name}`}
+                onClick={() => handleRemoveFile(i)}
+                className="bg-red-500 hover:bg-red-600 text-white rounded-full h-6 w-6 flex items-center justify-center"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -106,146 +123,219 @@ const FileInput = ({
   );
 };
 
-
 const ServiceForm: React.FC<ServiceFormProps> = ({ serviceTitle }) => {
   const { isLoading, error, submitForm } = useServiceStore();
   const formRef = useRef<HTMLFormElement>(null);
 
-  // ✅ 1. STATE IS UPDATED TO HOLD ARRAYS OF FILES
   const [medicalReports, setMedicalReports] = useState<File[]>([]);
-  const [previousRecords, setPreviousRecords] = useState<File[]>([]);
   const [attendantPassport, setAttendantPassport] = useState<File[]>([]);
   const [patientPassport, setPatientPassport] = useState<File[]>([]);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  // ✅ Validation helpers
+  const validateText = (text: string) => /^[A-Za-z\s.'-]+$/.test(text);
+  const validatePhone = (text: string) => /^[0-9]{6,15}$/.test(text);
 
-    if (!formRef.current) return;
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // stop default reload
 
-    // ✅ 2. VALIDATION CHECKS THE ARRAY LENGTH
+    const formData = new FormData(formRef.current!);
+    const patientName = formData.get("patientName")?.toString().trim() || "";
+    formData.append("email", "dumy@gmail.com");
+    const phone = formData.get("phone")?.toString().trim() || "";
+
+    if (!validateText(patientName)) {
+      toast.error("Please enter a valid patient name (letters only)");
+      return;
+    }
+
+    if (!validatePhone(phone)) {
+      toast.error("Please enter a valid phone number (6–15 digits)");
+      return;
+    }
+
     if (serviceTitle?.includes("Treatment Planning") && medicalReports.length === 0) {
-      toast.error('Please attach your medical reports to proceed.');
+      toast.error("Please attach your medical reports to proceed.");
       return;
     }
     if (serviceTitle?.includes("Visa & Travel") && patientPassport.length === 0) {
-      toast.error("Please attach the patient's passport to proceed.");
+      toast.error("Please attach the patient’s passport to proceed.");
       return;
     }
 
-    const formData = new FormData(formRef.current);
-    
-    // ✅ 3. ITERATE AND APPEND FILES FOR EACH CATEGORY
-    medicalReports.forEach(file => formData.append('medicalReports[]', file));
-    previousRecords.forEach(file => formData.append('previousRecords[]', file));
-    patientPassport.forEach(file => formData.append('patientPassport[]', file));
-    attendantPassport.forEach(file => formData.append('attendantPassport[]', file));
+    medicalReports.forEach((f) => formData.append("medicalReports[]", f));
+    attendantPassport.forEach((f) => formData.append("attendantPassport[]", f));
+    patientPassport.forEach((f) => formData.append("patientPassport[]", f));
 
-    if (serviceTitle) formData.append('serviceTitle', serviceTitle);
+    if (serviceTitle) formData.append("serviceTitle", serviceTitle);
 
-    await submitForm(formData);
+    const success = await submitForm(formData);
+
+    if (success) {
+      toast.success(" Your request has been submitted successfully!");
+      // ⏳ Reload page after short delay to show toast
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    }
   };
 
+  // ✅ Reusable Fields
   const renderPatientDetailsFields = () => (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-        <div className="space-y-2">
+        <div>
           <Label htmlFor="patientName">Patient Name</Label>
-          <Input id="patientName" name="patientName" placeholder="Enter patient name" required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">Email ID</Label>
-          <Input id="email" name="email" type="email" placeholder="Enter email address" required />
+          <Input
+            id="patientName"
+            name="patientName"
+            placeholder="Enter patient name"
+            pattern="[A-Za-z\s.'-]+"
+            required
+            onChange={(e) =>
+              (e.target.value = e.target.value.replace(/[^A-Za-z\s.'-]/g, ""))
+            }
+          />
         </div>
       </div>
 
-
-      <div className="space-y-2">
+      <div>
         <Label htmlFor="phone">Mobile Number</Label>
-
-        <div className="flex flex-col gap-2 md:flex-row" >
-          <Select name="countryCode"  defaultValue="IN-+91" required    >
-            <SelectTrigger className="w-full md:w-[130px]">
-              <SelectValue placeholder="Code" /></SelectTrigger>
+        <div className="flex flex-col md:flex-row gap-2">
+          <Select name="countryCode" defaultValue="IN-+91" required>
+            <SelectTrigger className="md:w-[130px] w-full">
+              <SelectValue placeholder="Code" />
+            </SelectTrigger>
             <SelectContent>
-              {countryData.map((country) => (
-                <SelectItem key={country.iso} value={`${country.iso}-+${country.code}`}>
-                  {country.iso} (+{country.code})
+              {countryData.map((c) => (
+                <SelectItem key={c.iso} value={`${c.iso}-+${c.code}`}>
+                  {c.iso} (+{c.code})
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <Input id="phone" name="phone" type="tel" placeholder="XXXXXXXXXX" required className="flex-1" />
+          <Input
+            id="phone"
+            name="phone"
+            type="tel"
+            inputMode="numeric"
+            pattern="[0-9]{6,15}"
+            maxLength={15}
+            placeholder="Enter mobile number"
+            required
+            className="flex-1"
+            onChange={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
+          />
         </div>
       </div>
     </>
   );
 
-  const renderTreatmentPlanningFields = () => (
-    <div className="col-span-2 rounded-2xl p-4 border-1 border-primary">
-      {renderPatientDetailsFields()}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-        <div className="space-y-2">
-          <Label htmlFor="medicalCondition">Medical Condition</Label>
-          <Input id="medicalCondition" name="medicalCondition" placeholder="Describe your medical condition" required />
-        </div>
-        <FileInput id="medicalReports" label="Attach Medical Reports" required files={medicalReports} onFileChange={setMedicalReports} />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-        <div className="space-y-2">
-          <Label htmlFor="hospitalName">Hospital Name</Label>
-          <Input id="hospitalName" name="hospitalName" placeholder="Preferred hospital (optional)" />
-        </div>
-        <FileInput id="previousRecords" label="Attach Previous Treatment Records" files={previousRecords} onFileChange={setPreviousRecords} />
-      </div>
-    </div>
-  );
-
-  const renderVisaTravelFields = () => (
-    <div className="col-span-2 rounded-2xl p-4">
-      {renderPatientDetailsFields()}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-        <div className="space-y-2">
-          <Label htmlFor="attendantName">Attendant Name</Label>
-          <Input id="attendantName" name="attendantName" placeholder="Enter attendant name" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="relation">Relation with Patient</Label>
-          <Input id="relation" name="relation" placeholder="e.g., Spouse, Parent, Child" />
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-        <FileInput id="attendantPassport" label="Attach Attendant Passport" files={attendantPassport} onFileChange={setAttendantPassport} />
-        <FileInput id="patientPassport" label="Attach Patient Passport" required files={patientPassport} onFileChange={setPatientPassport} />
-      </div>
-      <div className="space-y-2 mt-4">
-        <FileInput id="medicalReports" label="Attach Medical Reports" files={medicalReports} onFileChange={setMedicalReports} />
-      </div>
-    </div>
-  );
-
+  // ✅ Service-specific UI
   const renderServiceSpecificFields = () => {
     if (!serviceTitle) return renderPatientDetailsFields();
-    if (serviceTitle.includes("Treatment Planning")) return renderTreatmentPlanningFields();
-    if (serviceTitle.includes("Visa & Travel")) return renderVisaTravelFields();
+
+    if (serviceTitle.includes("Treatment Planning"))
+      return (
+        <div className="p-4 border rounded-xl bg-gradient-to-br from-blue-50 to-white">
+          {renderPatientDetailsFields()}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <div>
+              <Label htmlFor="medicalCondition">Medical Condition</Label>
+              <Input
+                id="medicalCondition"
+                name="medicalCondition"
+                placeholder="Describe your medical condition"
+                onChange={(e) =>
+                  (e.target.value = e.target.value.replace(/[^A-Za-z\s.'-]/g, ""))
+                }
+                required
+              />
+            </div>
+            <FileInput
+              id="medicalReports"
+              label="Attach Medical Reports"
+              required
+              files={medicalReports}
+              onFileChange={setMedicalReports}
+            />
+          </div>
+        </div>
+      );
+
+    if (serviceTitle.includes("Visa & Travel"))
+      return (
+        <div className="p-4 border rounded-xl bg-gradient-to-br from-green-50 to-white">
+          {renderPatientDetailsFields()}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <div>
+              <Label htmlFor="attendantName">Attendant Name</Label>
+              <Input
+                id="attendantName"
+                name="attendantName"
+                placeholder="Enter attendant name"
+                onChange={(e) =>
+                  (e.target.value = e.target.value.replace(/[^A-Za-z\s.'-]/g, ""))
+                }
+              />
+            </div>
+            <div>
+              <Label htmlFor="relation">Relation with Patient</Label>
+              <Input
+                id="relation"
+                name="relation"
+                placeholder="e.g., Spouse, Parent, Child"
+                onChange={(e) =>
+                  (e.target.value = e.target.value.replace(/[^A-Za-z\s.'-]/g, ""))
+                }
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <FileInput
+              id="attendantPassport"
+              label="Attach Attendant Passport"
+              files={attendantPassport}
+              onFileChange={setAttendantPassport}
+            />
+            <FileInput
+              id="patientPassport"
+              label="Attach Patient Passport"
+              required
+              files={patientPassport}
+              onFileChange={setPatientPassport}
+            />
+          </div>
+        </div>
+      );
+
     return renderPatientDetailsFields();
   };
 
   return (
-    <Card className=" p-4 sm:p-8 shadow-card-medical bg-card border-4 border-medical rounded-2xl">
-      <Toaster position="top-center" reverseOrder={false} />
-      <form ref={formRef} onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 rounded-2xl p-0 sm:p-4" noValidate>
+    <Card className="p-6 sm:p-8 shadow-xl rounded-2xl border border-gray-200 bg-white">
+      <Toaster position="top-center" />
+      <form ref={formRef} onSubmit={handleSubmit} className="grid gap-6" noValidate>
         {renderServiceSpecificFields()}
-        <div className="col-span-1 space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="message">Additional Message</Label>
-            <Textarea id="message" name="message" placeholder="Write your message or any additional information..." className="min-h-[120px] resize-none" />
-          </div>
+        <div className="space-y-4">
           <div>
-            <Button type="submit" variant="medical" size="lg" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Submitting...' : 'Submit Request'}
-            </Button>
-            {error && <p className="text-red-500 mt-2">{error}</p>}
+            <Label htmlFor="message">Additional Message</Label>
+            <Textarea
+              id="message"
+              name="message"
+              placeholder="Write your message or any additional information..."
+              className="min-h-[120px] resize-none"
+            />
           </div>
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full bg-gradient-to-br from-blue-500 to-cyan-400 hover:bg-blue-700 text-white rounded-xl"
+            disabled={isLoading}
+          >
+            {isLoading ? "Submitting..." : "Submit Request"}
+          </Button>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>
       </form>
     </Card>

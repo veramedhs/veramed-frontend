@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
   Stethoscope,
@@ -20,7 +19,7 @@ const Services = () => {
       title: "Treatment Planning & Hospital Selection",
       description: "Personalized pairing with world-class institutions based on each patient's specific medical needs and preferences.",
       color: "text-medical-blue",
-      path: "/servicedetails/treatment-planning",
+      path: "/treatment-planning",
       id: "treatment-planning"
     },
     {
@@ -28,7 +27,7 @@ const Services = () => {
       title: "Visa & Travel Logistics",
       description: "End-to-end handling of travel-related permits, transportation, and comfortable lodging arrangements.",
       color: "text-medical-teal",
-      path: "/servicedetails/visa-travel",
+      path: "/visa-travel",
       id: "visa-travel"
     },
     {
@@ -36,7 +35,7 @@ const Services = () => {
       title: "Cultural & Language Support",
       description: "Trained interpreters assist patients throughout treatment and travel, ensuring clear communication.",
       color: "text-trust-blue",
-      path: "/servicedetails/language-support",
+      path: "/culture-language-support",
       id: "language-support"
     },
     {
@@ -44,7 +43,7 @@ const Services = () => {
       title: "Post-Treatment Follow-Up",
       description: "Continuity of care back home through scheduled follow-ups and remote check-ins after treatment abroad.",
       color: "text-medical-blue",
-      path: "/servicedetails/post-treatment",
+      path: "/post-treatment",
       id: "post-treatment"
     }
   ];

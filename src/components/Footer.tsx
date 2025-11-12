@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { 
-  Heart, 
   Mail, 
   Phone, 
   MapPin,
@@ -10,7 +9,6 @@ import {
   Linkedin,
   Instagram
 } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -20,33 +18,23 @@ const Footer = () => {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                <Heart className="w-6 h-6 text-medical-blue" />
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">V</span>
               </div>
               <div>
                 <h3 className="text-xl font-bold">Veramed Health Solutions</h3>
                 <p className="text-white/80 text-sm">Medical Tourism Excellence</p>
               </div>
             </div>
-            
             <p className="text-white/90 leading-relaxed">
               Your trusted partner in global healthcare, facilitating world-class 
               medical treatments abroad with comprehensive support since 2016.
             </p>
-            
             <div className="flex space-x-3">
-              <div className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors cursor-pointer">
-                <Facebook className="w-5 h-5" />
-              </div>
-              <div className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors cursor-pointer">
-                <Twitter className="w-5 h-5" />
-              </div>
-              <div className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors cursor-pointer">
-                <Linkedin className="w-5 h-5" />
-              </div>
-              <div className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors cursor-pointer">
-                <Instagram className="w-5 h-5" />
-              </div>
+              <Facebook className="w-5 h-5 p-2 bg-white/10 rounded-lg hover:bg-white/20 cursor-pointer transition-colors"/>
+              <Twitter className="w-5 h-5 p-2 bg-white/10 rounded-lg hover:bg-white/20 cursor-pointer transition-colors"/>
+              <Linkedin className="w-5 h-5 p-2 bg-white/10 rounded-lg hover:bg-white/20 cursor-pointer transition-colors"/>
+              <Instagram className="w-5 h-5 p-2 bg-white/10 rounded-lg hover:bg-white/20 cursor-pointer transition-colors"/>
             </div>
           </div>
 
@@ -58,8 +46,7 @@ const Footer = () => {
               <li><a href="#about" className="text-white/80 hover:text-white transition-colors">About Us</a></li>
               <li><a href="#why-us" className="text-white/80 hover:text-white transition-colors">Why Choose Us</a></li>
               <li><a href="#contact" className="text-white/80 hover:text-white transition-colors">Contact</a></li>
-              <li><Link to={"/patients-gallery"} className="text-white/80 hover:text-white transition-colors">Patient Gallery</Link></li>
-              
+              <li><Link to="/patients-gallery" className="text-white/80 hover:text-white transition-colors">Patient Gallery</Link></li>
             </ul>
           </div>
 
@@ -67,12 +54,10 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Our Services</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors">Treatment Planning</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors">Hospital Selection</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors">Visa Assistance</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors">Travel Logistics</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors">Language Support</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors">Post-Treatment Care</a></li>
+              <li><Link to="/treatment-planning" className="text-white/80 hover:text-white transition-colors">Treatment Planning & Hospital Selection</Link></li>
+              <li><Link to="/visa-travel" className="text-white/80 hover:text-white transition-colors">Visa & Travel Logistics</Link></li>
+              <li><Link to="/culture-language-support" className="text-white/80 hover:text-white transition-colors">Cultural & Language Support</Link></li>
+              <li><Link to="/post-treatment" className="text-white/80 hover:text-white transition-colors">Post-Treatment Follow-Up</Link></li>
             </ul>
           </div>
 
@@ -82,25 +67,23 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-white/80" />
-                <span className="text-white/90">+91-9953306560</span>
+                <a href="tel:+919953306560" className="text-white/90 hover:underline">+91-9953306560</a>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-white/80" />
-                <span className="text-white/90">veramedhs@gmail.com</span>
+                <a href="mailto:veramedhs@gmail.com" className="text-white/90 hover:underline">veramedhs@gmail.com</a>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-white/80" />
-                <span className="text-white/90">Sec-46, Gurugram, Haryana</span>
+                <a href="https://www.google.com/maps/search/Sec-46,+Gurugram,+Haryana" target="_blank" rel="noopener noreferrer" className="text-white/90 hover:underline">
+                  Sec-46, Gurugram, Haryana
+                </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Globe className="w-5 h-5 text-white/80" />
                 <span className="text-white/90">24/7 Global Support</span>
               </div>
             </div>
-            
-            <Button variant="outline" className="mt-4 border-white hover:bg-white hover:text-medical-blue">
-              Emergency Contact
-            </Button>
           </div>
         </div>
 
@@ -110,9 +93,9 @@ const Footer = () => {
             © 2025 Veramed Health Solutions. All rights reserved. | Founded by Shah Fahad
           </div>
           <div className="flex space-x-6 text-sm">
-            <Link to={"/privacy-policy"} className="text-white/80 hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to={"/terms-and-condition"} className="text-white/80 hover:text-white transition-colors">Terms of Service</Link>
-            <Link to={"/medical-desclaimar"} className="text-white/80 hover:text-white transition-colors">Medical Disclaimer</Link>
+            <Link to="/privacy-policy" className="text-white/80 hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/terms-and-condition" className="text-white/80 hover:text-white transition-colors">Terms of Service</Link>
+            <Link to="/medical-desclaimar" className="text-white/80 hover:text-white transition-colors">Medical Disclaimer</Link>
           </div>
         </div>
       </div>

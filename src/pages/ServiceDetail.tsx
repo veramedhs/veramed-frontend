@@ -1,11 +1,15 @@
+// src/pages/ServiceDetail.tsx
 import React from "react";
 import { useParams } from "react-router-dom";
 import ServiceForm from "../components/ServiceForm";
 import { CheckCircle } from "lucide-react";
+
 import serviceImg from "@/assets/serviceSection.jpeg";
 import visaImg from "@/assets/visa1.jpeg";
-import treatmentImg from "@/assets/p&t1.png"; 
-import languageImg from "@/assets/c&l.jpeg"; 
+import treatmentImg from "@/assets/p&t1.png";
+import languageImg from "@/assets/c&l.jpeg";
+import max3 from "../assets/1.jpeg";
+
 const serviceData: Record<
   string,
   {
@@ -97,7 +101,7 @@ const ServiceDetail: React.FC = () => {
   return (
     <div className="py-16 px-4 md:px-16 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto">
-        {/* Service Header */}
+        {/* --- Service Header --- */}
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
             {service.title}
@@ -107,8 +111,9 @@ const ServiceDetail: React.FC = () => {
           </p>
         </div>
 
+        {/* --- Info Section --- */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {/* Included Card */}
+          {/* Included */}
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               What’s Included
@@ -123,7 +128,7 @@ const ServiceDetail: React.FC = () => {
             </ul>
           </div>
 
-          {/* Conditional Image */}
+          {/* Image */}
           <div className="rounded-xl overflow-hidden shadow-lg">
             <img
               src={
@@ -136,11 +141,11 @@ const ServiceDetail: React.FC = () => {
                   : serviceImg
               }
               alt="Service Visual"
-              className="w-full h-full object-fill"
+              className="w-full h-full object-cover"
             />
           </div>
 
-          {/* More Info Card */}
+          {/* More Info */}
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               More Information
@@ -149,9 +154,29 @@ const ServiceDetail: React.FC = () => {
           </div>
         </div>
 
-        {/* Shared Form */}
-        <div className="bg-white p-8 rounded-lg shadow-md">
-          <ServiceForm serviceTitle={service.title} />
+        {/* --- Hospital Images + Form --- */}
+        <div className="bg-white p-8 rounded-lg shadow-md grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          {/* Left side - hospital images */}
+          <div className="flex justify-center items-center w-full">
+            <ServiceForm serviceTitle={service.title} />
+          </div>
+          <div className="grid grid-cols-1 gap-5 mt-0">
+            <img
+              src={max3}
+              alt="Max Hospital"
+              className="w-full h-full object-cover rounded-lg shadow hover:scale-105 transition-transform duration-300"
+            />
+            
+           
+            <img
+              src={max3}
+              alt="Hospital 4"
+              className="w-full h-full object-cover rounded-lg shadow hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+
+          {/* Right side - form */}
+          
         </div>
       </div>
     </div>

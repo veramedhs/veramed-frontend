@@ -20,6 +20,10 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import MedicalDisclaimerPage from "./pages/MedicalDisclaimer";
 import PatientGalleryPage from "./pages/PetientsGallery";
 import LeaveReviewPage from "./pages/LeaveReviewPage";
+import TreatmentAndPlaning from "./pages/TreatmentAndPlaning";
+import VisaAndTravel from "./pages/VisaAndTravel";
+import CultureAndLanguage from "./pages/CultureAndLanguage";
+import PostTreatment from "./pages/PostTreatment";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +47,14 @@ const App = () => (
           <Route path="/medical-desclaimar" element={<MedicalDisclaimerPage />} />
           <Route path="/patients-gallery" element={<PatientGalleryPage />} />
           <Route path="/leave-review" element={<LeaveReviewPage />} />
+          <Route path="/treatment-planning" element={<TreatmentAndPlaning />} />
+          <Route path="/visa-travel" element={<VisaAndTravel />} />
+          <Route path="/culture-language-support" element={<CultureAndLanguage />} />
+          <Route path="/post-treatment" element={<PostTreatment />} />
+
+
+
+
 
 
         </Routes>

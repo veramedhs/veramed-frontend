@@ -17,24 +17,18 @@ import {
 } from "lucide-react";
 import ConsultationForm from "./ConsultationModal";
 
-// Custom NavLink for smooth scrolling on homepage
+// Smooth scroll component
 const NavLink = ({
   to,
   hash,
   children,
   className,
   onClick,
-}: {
-  to: string;
-  hash?: string;
-  children: React.ReactNode;
-  className?: string;
-  onClick?: () => void;
-}) => {
+}: any) => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = (e: any) => {
     if (onClick) onClick();
     if (isHomePage && hash) {
       e.preventDefault();
@@ -63,7 +57,7 @@ const Header = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 1024) {
         setIsMenuOpen(false);
       }
     };
@@ -71,47 +65,52 @@ const Header = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? "hidden" : "auto";
-  }, [isMenuOpen]);
-
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <header className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-20">
+        
+        {/* ⭐ MAX WIDTH CONTAINER for proper alignment */}
+        <div className="max-w-[1280px] mx-auto px-4">
+
+          {/* ⭐ Reduced header height */}
+          <div className="flex items-center justify-between h-16">
+
+            {/* LOGO */}
             <Link
               to="/"
               className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
             >
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">V</span>
+              <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-base">V</span>
               </div>
               <div>
-                <h1 className="text-md sm:text-l font-bold text-foreground">
+                <h1 className="text-sm md:text-base font-bold text-foreground leading-tight">
                   Veramed Health Solutions
                 </h1>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[10px] md:text-xs text-muted-foreground">
                   Medical Tourism India
                 </p>
               </div>
             </Link>
 
-            <nav className="hidden md:flex items-center space-x-8">
-              <NavLink to="/" hash="#services" className="text-foreground hover:text-primary transition-colors">Services</NavLink>
-              <NavLink to="/" hash="#about" className="text-foreground hover:text-primary transition-colors">About</NavLink>
-              <NavLink to="/" hash="#collaborate" className="text-foreground hover:text-primary transition-colors">Be Partner With Us</NavLink>
-              <NavLink to="/" hash="#why-us" className="text-foreground hover:text-primary transition-colors">Why Choose Us</NavLink>
-              <NavLink to="/" hash="#contact" className="text-foreground hover:text-primary transition-colors">Contact</NavLink>
-              <Link to="/blog" className="text-foreground hover:text-primary transition-colors">Blog</Link>
-              <Link to="/leave-review" className="text-foreground hover:text-primary transition-colors">Leave a Review</Link>
-
+            {/* DESKTOP NAV */}
+            <nav className="hidden lg:flex items-center space-x-5">
+              <NavLink to="/" hash="#services" className="nav-link">Services</NavLink>
+              <NavLink to="/" hash="#about" className="nav-link">About</NavLink>
+              <NavLink to="/" hash="#collaborate" className="nav-link">Be Partner With Us</NavLink>
+              <NavLink to="/" hash="#why-us" className="nav-link">Why Choose Us</NavLink>
+              <NavLink to="/" hash="#contact" className="nav-link">Contact</NavLink>
+              <Link to="/blog" className="nav-link">Blog</Link>
+              <Link to="/leave-review" className="nav-link">Leave a Review</Link>
             </nav>
 
+            {/* CTA + PHONE */}
             <div className="flex items-center">
-              <div className="hidden lg:flex items-center space-x-1 mr-4">
+              <div className="hidden xl:flex items-center space-x-1 mr-4">
                 <Phone className="w-4 h-4 text-primary" />
-                <a href="tel:+91-9953306560" className="text-sm hover:text-primary transition-colors">+91-9953306560</a>
+                <a href="tel:+91-9953306560" className="text-sm hover:text-primary">
+                  +91-9953306560
+                </a>
               </div>
 
               <DialogTrigger asChild>
@@ -120,70 +119,50 @@ const Header = () => {
                 </Button>
               </DialogTrigger>
 
-              <button className="md:hidden ml-4" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu">
+              {/* MOBILE MENU ICON */}
+              <button
+                className="ml-3 lg:hidden"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
                 {isMenuOpen ? <X /> : <Menu />}
               </button>
             </div>
           </div>
 
-          {/* Mobile Menu */}
-          <div className={`absolute left-0 w-full bg-background shadow-lg md:hidden transition-all duration-300 ease-in-out ${isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"}`}>
-            <div className="container mx-auto px-4 py-8">
-              <nav className="flex flex-col space-y-6 text-center">
-                <NavLink to="/" hash="#services" className="text-lg text-foreground hover:text-primary" onClick={() => setIsMenuOpen(false)}>Services</NavLink>
-                <NavLink to="/" hash="#about" className="text-lg text-foreground hover:text-primary" onClick={() => setIsMenuOpen(false)}>About</NavLink>
-                <NavLink to="/" hash="#collaborate" className="text-lg text-foreground hover:text-primary" onClick={() => setIsMenuOpen(false)}>Be Partner With Us</NavLink>
-                <NavLink to="/" hash="#why-us" className="text-lg text-foreground hover:text-primary" onClick={() => setIsMenuOpen(false)}>Why Choose Us</NavLink>
-                <NavLink to="/" hash="#contact" className="text-lg text-foreground hover:text-primary" onClick={() => setIsMenuOpen(false)}>Contact</NavLink>
-                <Link to="/blog" className="text-lg text-foreground hover:text-primary" onClick={() => setIsMenuOpen(false)}>Blog</Link>
-                <Link to="/leave-review" className="text-lg text-foreground hover:text-primary" onClick={() => setIsMenuOpen(false)}>Leave a Review</Link>
-              </nav>
-              <div className="mt-8 pt-6 border-t border-border flex flex-col items-center space-y-4 text-sm text-muted-foreground">
-                <div className="flex items-center space-x-2">
-                  <Phone className="w-4 h-4" />
-                  <a href="tel:+91-9953306560">+91-9953306560</a>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Mail className="w-4 h-4" />
-                  <a href="mailto:veramedhs@gmail.com">veramedhs@gmail.com</a>
-                </div>
-              </div>
+          {/* ⭐ MOBILE MENU */}
+          <div
+            className={`lg:hidden absolute left-0 w-full bg-white shadow-lg transition-all duration-300 ${
+              isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
+            }`}
+          >
+            <div className="px-4 py-6 space-y-6 text-center">
+              <NavLink className="mobile-link" to="/" hash="#services" onClick={() => setIsMenuOpen(false)}>Services</NavLink>
+              <NavLink className="mobile-link" to="/" hash="#about" onClick={() => setIsMenuOpen(false)}>About</NavLink>
+              <NavLink className="mobile-link" to="/" hash="#collaborate" onClick={() => setIsMenuOpen(false)}>Be Partner With Us</NavLink>
+              <NavLink className="mobile-link" to="/" hash="#why-us" onClick={() => setIsMenuOpen(false)}>Why Choose Us</NavLink>
+              <NavLink className="mobile-link" to="/" hash="#contact" onClick={() => setIsMenuOpen(false)}>Contact</NavLink>
+              <Link className="mobile-link" to="/blog" onClick={() => setIsMenuOpen(false)}>Blog</Link>
+              <Link className="mobile-link" to="/leave-review" onClick={() => setIsMenuOpen(false)}>Leave a Review</Link>
 
-              <DialogTrigger asChild>
-                <Button variant="medical" className="w-full mt-8" onClick={() => setIsMenuOpen(false)}>
-                  Get Second Opinion
-                </Button>
-              </DialogTrigger>
+              <div className="border-t pt-4 space-y-3">
+                <div className="flex justify-center items-center space-x-2 text-sm">
+                  <Phone className="w-4" />
+                  <a href="tel:+919953306560">+91-9953306560</a>
+                </div>
+
+                <DialogTrigger asChild>
+                  <Button variant="medical" className="w-full" onClick={() => setIsMenuOpen(false)}>
+                    Get Second Opinion
+                  </Button>
+                </DialogTrigger>
+              </div>
             </div>
           </div>
+
         </div>
       </header>
 
-      {/* Mobile Bottom Navigation Bar */}
-      <div className="fixed bottom-0 inset-x-0 bg-white border-t shadow-md flex justify-around items-center py-2 z-50 md:hidden">
-        <a target="_blank" href="https://mymedicalassitant.com/find-doctor" className="flex flex-col items-center text-xs text-muted-foreground hover:text-primary">
-          <User className="h-5 w-5" />
-          Doctors
-        </a>
-        <Link to="/#book" className="flex flex-col items-center text-xs text-muted-foreground hover:text-primary">
-          <Calendar className="h-5 w-5" />
-          Book Appt
-        </Link>
-        <a href="https://wa.me/919953306560" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center text-xs text-muted-foreground hover:text-primary">
-          <MessageCircleMore className="h-5 w-5" />
-          Chat
-        </a>
-        <a href="tel:+919953306560" className="flex flex-col items-center text-xs text-muted-foreground hover:text-primary">
-          <Phone className="h-5 w-5" />
-          Call Us
-        </a>
-        <button className="flex flex-col items-center text-xs text-muted-foreground hover:text-primary" onClick={() => setIsMenuOpen(true)}>
-          <Menu className="h-5 w-5" />
-          Menu
-        </button>
-      </div>
-
-      {/* Modal Dialog Content */}
+      {/* MODAL CONTENT */}
       <DialogContent className="sm:max-w-[480px] p-0 border-none">
         <ConsultationForm onSuccess={() => setIsModalOpen(false)} />
       </DialogContent>

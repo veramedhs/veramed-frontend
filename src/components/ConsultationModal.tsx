@@ -9,18 +9,13 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+
 import { Upload, X, File as FileIcon, Loader2 } from "lucide-react";
 import { useConsultationStore } from "@/store/consultationStore";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { countryData } from "@/lib/data/countries";
 
-// --- Allowed File Types ---
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+
 const ALLOWED_FILE_TYPES = [
   "image/jpeg",
   "image/png",
@@ -43,10 +38,8 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // --- Regex Pattern for Full Name ---
   const fullNameRegex = /^[A-Za-z\s.'-]{2,50}$/;
 
-  // --- Reset After Submission ---
   useEffect(() => {
     if (isSuccess) {
       toast.success("Request sent successfully!");
@@ -64,24 +57,29 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
     }
   }, [isSuccess, error, reset, onSuccess]);
 
-  // --- Handle File Upload ---
+  const handlePhoneChange = (value: string, data: any) => {
+    const dial = `+${data.dialCode}`;
+    setCountryCode(dial);
+
+    const pureNumber = value.replace(data.dialCode, "");
+    setPhone(pureNumber);
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (!selectedFiles) return;
 
     const newFiles = Array.from(selectedFiles);
-    const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+    const maxSizeInBytes = 10 * 1024 * 1024;
 
     for (const file of newFiles) {
       if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-        toast.error(
-          `Invalid file type: ${file.name}. Please upload an image, PDF, or DOC file.`
-        );
+        toast.error(`Invalid file type: ${file.name}`);
         continue;
       }
 
       if (file.size > maxSizeInBytes) {
-        toast.error(`File size exceeds 10MB: ${file.name}.`);
+        toast.error(`File size exceeds 10MB: ${file.name}`);
         continue;
       }
 
@@ -96,8 +94,6 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
         setFilePreviews((prev) => [...prev, ""]);
       }
     }
-
-    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleRemoveFile = (index: number) => {
@@ -111,30 +107,20 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // --- Form Submit with Validation ---
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isLoading) return;
 
-    const trimmedFullName = fullName.trim();
-    const trimmedPhone = phone.trim();
-    const trimmedMessage = message.trim();
+    if (!fullName.trim()) return toast.error("Please enter your full name.");
+    if (!fullNameRegex.test(fullName)) return toast.error("Enter a valid full name.");
 
-    // Validate Full Name
-    if (!trimmedFullName) return toast.error("Please enter your full name.");
-    if (!fullNameRegex.test(trimmedFullName))
-      return toast.error("Please enter a valid full name (letters only).");
-
-    // Validate Phone
-    if (!trimmedPhone) return toast.error("Please enter your phone number.");
-    if (trimmedPhone.length < 5 || trimmedPhone.length > 15)
+    if (!phone.trim()) return toast.error("Enter your phone number.");
+    if (phone.length < 5 || phone.length > 15)
       return toast.error("Please enter a valid phone number.");
 
-    // Prepare Data
     const formData = new FormData();
-    formData.append("fullName", trimmedFullName);
-    formData.append("phone", `${countryCode}${trimmedPhone}`);
-    formData.append("message", trimmedMessage);
+    formData.append("fullName", fullName.trim());
+    formData.append("phone", `${countryCode}${phone.trim()}`);
+    formData.append("message", message.trim());
     formData.append("email", "dumy@gmail.com");
 
     attachments.forEach((file) => formData.append("attachments[]", file));
@@ -144,8 +130,8 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 
   return (
     <>
-      <DialogHeader className="p-6 pb-4">
-        <DialogTitle className="text-2xl font-bold text-center">
+      <DialogHeader className="p-4 pb-2">
+        <DialogTitle className="text-xl font-bold text-center">
           Get a Free Consultation
         </DialogTitle>
         <DialogDescription className="text-center">
@@ -153,13 +139,13 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
         </DialogDescription>
       </DialogHeader>
 
-      <div className="px-6 pb-6">
+      <div className="px-4 pb-4">
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* ✅ Full Name */}
+
+          {/* Full Name */}
           <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
+            <Label>Full Name</Label>
             <Input
-              id="fullName"
               value={fullName}
               onChange={(e) =>
                 setFullName(e.target.value.replace(/[^A-Za-z\s.'-]/g, ""))
@@ -170,90 +156,60 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
             />
           </div>
 
-          {/* ✅ Phone + Country Code */}
+          {/* ⭐ REPLACED WITH PHONE INPUT LIBRARY ⭐ */}
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
-            <div className="flex items-center gap-2">
-              <Select
-                defaultValue={countryCode}
-                onValueChange={setCountryCode}
-                disabled={isLoading}
-              >
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Code" />
-                </SelectTrigger>
-                <SelectContent>
-                  {countryData.map((country) => (
-                    <SelectItem key={country.iso} value={`+${country.code}`}>
-                      {country.country} (+{country.code})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <Label>Phone Number</Label>
 
-              <Input
-                id="phone"
-                type="tel"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={phone}
-                onChange={(e) =>
-                  setPhone(e.target.value.replace(/\D/g, ""))
-                }
-                placeholder="Enter mobile number"
-                required
-                disabled={isLoading}
-                className="flex-1"
-              />
-            </div>
+            <PhoneInput
+              country={"in"}
+              value={countryCode + phone}
+              onChange={handlePhoneChange}
+              inputProps={{
+                name: "phone",
+                required: true,
+              }}
+              containerClass="w-full"
+              inputClass="!w-full !py-2.5 !text-sm !border !border-gray-300 !rounded-lg"
+            />
           </div>
 
-          {/* ✅ Message */}
+          {/* Message */}
           <div className="space-y-2">
-            <Label htmlFor="message">Message</Label>
+            <Label>Message</Label>
             <Textarea
-              id="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Please describe your medical needs..."
-              className="min-h-[100px]"
+              className="min-h-[90px]"
               disabled={isLoading}
             />
           </div>
 
-          {/* ✅ File Upload */}
+          {/* File Upload */}
           <div className="space-y-2">
-            <Label htmlFor="attachment">Upload Medical Documents (Optional)</Label>
+            <Label>Upload Medical Documents (Optional)</Label>
+
             {attachments.length > 0 ? (
-              <div className="w-full p-3 space-y-3 border rounded-lg border-border">
+              <div className="w-full p-3 border rounded-lg space-y-2 max-h-32 overflow-auto">
                 {attachments.map((attachment, index) => (
                   <div key={index} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex items-center gap-2">
                       {filePreviews[index] ? (
                         <img
                           src={filePreviews[index]}
-                          alt="File preview"
-                          className="object-cover w-10 h-10 rounded-md"
+                          className="w-10 h-10 rounded-md"
                         />
                       ) : (
-                        <FileIcon className="w-8 h-8 text-muted-foreground" />
+                        <FileIcon className="w-7 h-7 text-muted-foreground" />
                       )}
-                      <div className="flex-grow min-w-0">
-                        <p className="text-sm font-medium truncate text-foreground">
-                          {attachment.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {(attachment.size / 1024).toFixed(2)} KB
-                        </p>
-                      </div>
+                      <p className="text-xs truncate">{attachment.name}</p>
                     </div>
+
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
                       onClick={() => handleRemoveFile(index)}
-                      className="w-8 h-8 rounded-full flex-shrink-0"
-                      disabled={isLoading}
                     >
                       <X className="w-4 h-4" />
                     </Button>
@@ -262,48 +218,34 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
               </div>
             ) : (
               <div
-                className={`relative flex flex-col items-center justify-center w-full h-32 transition-colors border-2 border-dashed rounded-lg border-border bg-background ${
-                  !isLoading && "cursor-pointer hover:bg-muted"
-                }`}
+                className="
+                  relative border-2 border-dashed rounded-lg
+                  h-20 flex flex-col items-center justify-center
+                  cursor-pointer hover:bg-muted transition
+                "
                 onClick={() => !isLoading && fileInputRef.current?.click()}
               >
                 <Input
                   ref={fileInputRef}
-                  id="attachment"
                   type="file"
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  onChange={handleFileChange}
-                  disabled={isLoading}
                   accept={ACCEPTED_FILES_STRING}
                   multiple
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  onChange={handleFileChange}
                 />
-                <div className="flex flex-col items-center justify-center text-center">
-                  <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
-                  <p className="mb-1 text-sm text-foreground">
-                    <span className="font-semibold text-blue-600">
-                      Click to upload
-                    </span>{" "}
-                    or drag and drop
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Image, PDF, DOC/DOCX (max. 10MB)
-                  </p>
-                </div>
+
+                <Upload className="w-5 h-5 mb-1 text-muted-foreground" />
+                <p className="text-xs font-semibold text-blue-600">Click to upload</p>
+                <p className="text-[10px] text-muted-foreground">JPG, PNG, PDF, DOC</p>
               </div>
             )}
           </div>
 
-          {/* ✅ Submit */}
-          <Button
-            type="submit"
-            variant="medical"
-            className="w-full"
-            disabled={isLoading}
-          >
+          {/* Submit */}
+          <Button className="w-full" type="submit" variant="medical" disabled={isLoading}>
             {isLoading ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Submitting...
+                <Loader2 className="w-4 h-4 animate-spin mr-2" /> Submitting...
               </>
             ) : (
               "Submit Request"

@@ -16,33 +16,15 @@ const Hero = () => {
     const countriesTarget = 15;
 
     const yearsInterval = setInterval(() => {
-      setYears((prev) => {
-        if (prev >= yearsTarget) {
-          clearInterval(yearsInterval);
-          return yearsTarget;
-        }
-        return prev + 1;
-      });
+      setYears((prev) => (prev >= yearsTarget ? yearsTarget : prev + 1));
     }, 100);
 
     const patientsInterval = setInterval(() => {
-      setPatients((prev) => {
-        if (prev >= patientsTarget) {
-          clearInterval(patientsInterval);
-          return patientsTarget;
-        }
-        return prev + 50;
-      });
+      setPatients((prev) => (prev >= patientsTarget ? patientsTarget : prev + 50));
     }, 1);
 
     const countriesInterval = setInterval(() => {
-      setCountries((prev) => {
-        if (prev >= countriesTarget) {
-          clearInterval(countriesInterval);
-          return countriesTarget;
-        }
-        return prev + 1;
-      });
+      setCountries((prev) => (prev >= countriesTarget ? countriesTarget : prev + 1));
     }, 100);
 
     return () => {
@@ -53,12 +35,14 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="bg-white dark:bg-gray-900">
-      <div className="container mx-auto pt-5 px-6 py-16">
-        <div className="flex flex-col lg:flex-row items-center">
-          {/* Left Side: Content */}
-          <div className="lg:w-1/2 lg:pr-12">
-            <div className="flex items-center space-x-4 mb-4">
+    <section className="bg-white dark:bg-gray-900 w-full overflow-hidden">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-16">
+        <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+
+          {/* LEFT SECTION */}
+          <div className="lg:w-1/2 text-center lg:text-left">
+            {/* Icon Row */}
+            <div className="flex items-center justify-center lg:justify-start space-x-4 mb-4">
               <div className="p-2 bg-blue-100 dark:bg-blue-800/20 rounded-full">
                 <Globe className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
@@ -69,51 +53,66 @@ const Hero = () => {
                 <Shield className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white leading-tight">
+
+            {/* Heading */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white leading-tight">
               Your Gateway to
-              <span className="block text-blue-600 dark:text-blue-400">
+              <span className="block text-blue-600 dark:text-blue-400 mt-1">
                 Global Healthcare
               </span>
             </h1>
 
-            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-              Veramed Group partners with India’s accredited hospitals to deliver safe, affordable, and world-class medical care — built on expertise, compassion, and trust since 2016
+            {/* Description */}
+            <p className="mt-4 text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-xl mx-auto lg:mx-0">
+              Veramed Group partners with India’s accredited hospitals to deliver safe,
+              affordable, and world-class medical care — built on expertise, compassion,
+              and trust since 2016.
             </p>
 
-            <div className="mt-8">
+            {/* CTA Button */}
+            <div className="mt-6 sm:mt-8">
               <Link to={"/start-your-journey"}>
-                <Button size="lg" className="group">
+                <Button size="lg" className="group w-full sm:w-auto">
                   Start Your Journey
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
             </div>
 
-            <div className="mt-12 grid grid-cols-3 gap-6 text-center">
-              <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow">
-                <div className="text-xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+            {/* Stats Section */}
+            <div className="mt-10 sm:mt-12 grid grid-cols-3 gap-4 sm:gap-6 text-center">
+              <div className="bg-gray-100 dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
+                <div className="text-lg sm:text-3xl font-bold text-gray-800 dark:text-white">
                   {years}+
                 </div>
-                <div className="text-gray-500 dark:text-gray-400">Years of Excellence</div>
+                <div className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
+                  Years of Excellence
+                </div>
               </div>
-              <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow">
-                <div className="text-xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+
+              <div className="bg-gray-100 dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
+                <div className="text-lg sm:text-3xl font-bold text-gray-800 dark:text-white">
                   {patients}+
                 </div>
-                <div className="text-gray-500 dark:text-gray-400">Patients Served</div>
+                <div className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
+                  Patients Served
+                </div>
               </div>
-              <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow">
-                <div className="text-xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+
+              <div className="bg-gray-100 dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
+                <div className="text-lg sm:text-3xl font-bold text-gray-800 dark:text-white">
                   {countries}+
                 </div>
-                <div className="text-gray-500 dark:text-gray-400">Partner Countries</div>
+                <div className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
+                  Partner Countries
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right Side: Image */}
-          <div className="lg:w-1/2 mt-12 lg:mt-0">
-            <div className="relative w-full h-96 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-lg overflow-hidden">
+          {/* RIGHT SECTION — HERO IMAGE */}
+          <div className="lg:w-1/2 flex justify-center">
+            <div className="relative w-full max-w-md sm:max-w-lg md:max-w-xl h-72 sm:h-80 md:h-[420px] bg-gray-200 dark:bg-gray-700 rounded-lg shadow-lg overflow-hidden">
               <img
                 src={heroImg}
                 className="hidden sm:block w-full h-full object-cover"
@@ -126,6 +125,7 @@ const Hero = () => {
               />
             </div>
           </div>
+
         </div>
       </div>
     </section>

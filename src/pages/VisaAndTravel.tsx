@@ -5,7 +5,7 @@ import img2 from "../assets/Tourist-Visa.jpg";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import toast, { Toaster } from "react-hot-toast";
-// import Footer from "@/components/Footer";  
+import Footer from "@/components/Footer"; // ✅ import your Footer component
 
 const VisaAndTravel: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -383,9 +383,9 @@ const VisaAndTravel: React.FC = () => {
           </div>
         </div>
       </div>
-{/* 
-      ✅ Footer Section
-      <Footer /> */}
+
+      
+      <Footer />
     </>
   );
 };

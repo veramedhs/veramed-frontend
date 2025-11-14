@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 
 const StartYourJourney = () => {
   const tourismServices = [
-    {
+    {  
       title: "Doctor & Hospital Selection",
       description: "We find the right specialist and hospital based on your diagnosis, preference, and budget."
     },

@@ -4,10 +4,8 @@ import {
   Phone, 
   MapPin,
   Globe,
-  Facebook,
-  Twitter,
-  Linkedin,
-  Instagram
+  
+
 } from "lucide-react";
 
 const Footer = () => {
@@ -30,13 +28,7 @@ const Footer = () => {
               Your trusted partner in global healthcare, facilitating world-class 
               medical treatments abroad with comprehensive support since 2016.
             </p>
-            <div className="flex space-x-3">
-              <Facebook className="w-5 h-5 p-2 bg-white/10 rounded-lg hover:bg-white/20 cursor-pointer transition-colors"/>
-              <Twitter className="w-5 h-5 p-2 bg-white/10 rounded-lg hover:bg-white/20 cursor-pointer transition-colors"/>
-              <Linkedin className="w-5 h-5 p-2 bg-white/10 rounded-lg hover:bg-white/20 cursor-pointer transition-colors"/>
-              <Instagram className="w-5 h-5 p-2 bg-white/10 rounded-lg hover:bg-white/20 cursor-pointer transition-colors"/>
-            </div>
-          </div>
+           </div>
 
           {/* Quick Links */}
           <div>
@@ -75,7 +67,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-white/80" />
-                <a href="https://www.google.com/maps/search/Sec-46,+Gurugram,+Haryana" target="_blank" rel="noopener noreferrer" className="text-white/90 hover:underline">
+                <a href="https://www.google.com/maps/dir//3060-P,+near+ambedkar+chowk,+Samaspur+Village,+Sector+46,+Gurugram,+Samaspur,+Haryana+122003/@28.4295345,76.9829725,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x390d19006dbfd66f:0xfccd84faea69391e!2m2!1d77.0653739!2d28.4295593?entry=ttu&g_ep=EgoyMDI1MTExMC4wIKXMDSoASAFQAw%3D%3D " target="_blank" rel="noopener noreferrer" className="text-white/90 hover:underline">
                   Sec-46, Gurugram, Haryana
                 </a>
               </div>

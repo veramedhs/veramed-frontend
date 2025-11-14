@@ -30,12 +30,13 @@ const Contact = () => {
   const [countryCode, setCountryCode] = useState("+91");
   const [phoneNumber, setPhoneNumber] = useState("");
 
+  // Handle text field changes
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // ⭐ Phone Input
+  // Handle phone input changes
   const handlePhoneChange = (value: string, data: any) => {
     const dial = `+${data.dialCode}`;
     const numberOnly = value.replace(data.dialCode, "");
@@ -60,18 +61,20 @@ const Contact = () => {
     <section id="contact" className="py-20 bg-background">
       <div className="container mx-auto px-4">
 
+        {/* Heading */}
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
             Ready to Begin Your <span className="text-primary">Healthcare Journey?</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Get in touch with our expert team for a personalized consultation.
+            We're here to guide you every step of the way.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
 
-          {/* Left Cards */}
+          {/* LEFT INFO CARDS */}
           <div className="space-y-6">
             <Card className="p-6 hover:shadow-card-medical">
               <div className="flex items-center gap-4 mb-4">
@@ -83,7 +86,7 @@ const Contact = () => {
                   <p className="text-muted-foreground">+91-9953306560</p>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">Speak with our experts</p>
+              <p className="text-sm text-muted-foreground">Speak directly with our medical tourism experts</p>
             </Card>
 
             <Card className="p-6 hover:shadow-card-medical">
@@ -96,7 +99,7 @@ const Contact = () => {
                   <p className="text-muted-foreground">veramedhs@gmail.com</p>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">Send us your requirements</p>
+              <p className="text-sm text-muted-foreground">Send us your medical requirements</p>
             </Card>
 
             <Card className="p-6 hover:shadow-card-medical">
@@ -109,7 +112,7 @@ const Contact = () => {
                   <p className="text-muted-foreground">Gurgaon, India</p>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">Visit our HQ</p>
+              <p className="text-sm text-muted-foreground">Visit our headquarters</p>
             </Card>
 
             <Card className="p-6 hover:shadow-card-medical">
@@ -126,7 +129,7 @@ const Contact = () => {
             </Card>
           </div>
 
-          {/* Contact Form */}
+          {/* CONTACT FORM */}
           <div className="lg:col-span-2">
             <Card className="p-8 shadow-card-medical">
               <h3 className="text-2xl font-bold mb-6">Get Your Free Consultation</h3>
@@ -137,20 +140,16 @@ const Contact = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium mb-2">Full Name *</label>
-
-                    {/* ⭐ VALIDATION APPLIED HERE ⭐ */}
                     <Input
                       name="fullName"
                       placeholder="Enter your full name"
                       value={formData.fullName}
-                      onChange={(e) => {
-                        const cleaned = e.target.value.replace(/[^A-Za-z ]+/g, "");
-                        setFormData(prev => ({ ...prev, fullName: cleaned }));
-                      }}
+                      onChange={handleInputChange}
                       required
                     />
                   </div>
 
+                  {/* ⭐ Phone Input Library ⭐ */}
                   <div>
                     <label className="block text-sm font-medium mb-2">Phone Number *</label>
                     <PhoneInput
@@ -182,16 +181,18 @@ const Contact = () => {
                     <label className="block text-sm font-medium mb-2">Preferred Country</label>
                     <Input
                       name="preferredCountry"
-                      placeholder="India, Singapore..."
+                      placeholder="India, Singapore, Thailand..."
                       value={formData.preferredCountry}
                       onChange={handleInputChange}
                     />
                   </div>
                 </div>
 
-                {/* Condition */}
+                {/* Medical Condition */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Medical Condition *</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Medical Condition / Treatment Required *
+                  </label>
                   <Input
                     name="medicalCondition"
                     placeholder="Describe your condition..."
@@ -203,7 +204,9 @@ const Contact = () => {
 
                 {/* Additional Info */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Additional Information</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Additional Information
+                  </label>
                   <Textarea
                     name="additionalInfo"
                     placeholder="Any extra details..."
@@ -225,13 +228,12 @@ const Contact = () => {
                     Schedule Call Back
                   </Button>
                 </div>
-
               </form>
             </Card>
           </div>
         </div>
 
-        {/* Bottom Cards */}
+        {/* BOTTOM CARD ACTIONS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="p-6 text-center hover:shadow-card-medical">
             <div className="p-4 bg-gradient-primary rounded-full w-16 h-16 mx-auto mb-4">
@@ -249,7 +251,7 @@ const Contact = () => {
               <Phone className="w-8 h-8 text-white mx-auto" />
             </div>
             <h4 className="font-semibold mb-2">Emergency Support</h4>
-            <p className="text-sm text-muted-foreground mb-4">24/7 assistance</p>
+            <p className="text-sm text-muted-foreground mb-4">24/7 medical assistance</p>
             <a href="tel:+919953306560">
               <Button variant="medical" size="sm">Call Now</Button>
             </a>

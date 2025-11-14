@@ -24,6 +24,7 @@ import TreatmentAndPlaning from "./pages/TreatmentAndPlaning";
 import VisaAndTravel from "./pages/VisaAndTravel";
 import CultureAndLanguage from "./pages/CultureAndLanguage";
 import PostTreatment from "./pages/PostTreatment";
+import ContactUsNow from "./pages/ContactUsNow";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Header />
+        
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/blog" element={<BlogPage />} />
@@ -51,6 +53,7 @@ const App = () => (
           <Route path="/visa-travel" element={<VisaAndTravel />} />
           <Route path="/culture-language-support" element={<CultureAndLanguage />} />
           <Route path="/post-treatment" element={<PostTreatment />} />
+          <Route path="/contact-us-now" element={<ContactUsNow />} />
 
 
 

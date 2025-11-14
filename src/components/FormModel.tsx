@@ -25,11 +25,14 @@ import { Textarea } from '@/components/ui/textarea';
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
-// Form validation
+// ⭐ Zod Validation (Only alphabets allowed for full name)
 const formSchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  phone: z.string().min(5),
+  name: z
+    .string()
+    .min(2, "Full name must be at least 2 characters")
+    .regex(/^[A-Za-z ]+$/, "Only alphabets are allowed in full name"),
+  email: z.string().email("Invalid email"),
+  phone: z.string().min(5, "Phone number too short"),
   message: z.string().min(10).max(500),
   attachment: z.instanceof(FileList).optional(),
 });
@@ -67,7 +70,6 @@ export const FormModal: React.FC<FormModalProps> = ({
   });
 
   const { register, handleSubmit, formState: { errors }, reset, setValue, watch } = form;
-
   const watchedFiles = watch("attachment");
 
   React.useEffect(() => {
@@ -141,7 +143,6 @@ export const FormModal: React.FC<FormModalProps> = ({
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>{triggerElement}</DialogTrigger>
 
-        {/* ⭐ FIXED — NO SCROLL, AUTO HEIGHT ⭐ */}
         <DialogContent
           className="
             sm:max-w-lg
@@ -149,7 +150,7 @@ export const FormModal: React.FC<FormModalProps> = ({
             p-0
             rounded-xl
             bg-card 
-            overflow-visible        /* NO SCROLL */
+            overflow-visible
           "
         >
           <div className="p-4 sm:p-6">
@@ -165,18 +166,29 @@ export const FormModal: React.FC<FormModalProps> = ({
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
-              {/* Name */}
+              {/* ⭐ FULL NAME WITH REAL-TIME FILTERING */}
               <div className="space-y-1">
                 <Label>Full Name</Label>
-                <Input {...register("name")} placeholder={namePlaceholder} />
-                {errors.name && <p className="text-red-600 text-xs">Enter valid name</p>}
+                <Input
+                  {...register("name")}
+                  placeholder={namePlaceholder}
+                  onChange={(e) => {
+                    const cleaned = e.target.value.replace(/[^A-Za-z ]+/g, "");
+                    setValue("name", cleaned, { shouldValidate: true });
+                  }}
+                />
+                {errors.name && (
+                  <p className="text-red-600 text-xs">{errors.name.message}</p>
+                )}
               </div>
 
               {/* Email */}
               <div className="space-y-1">
                 <Label>Email</Label>
                 <Input {...register("email")} placeholder="you@example.com" />
-                {errors.email && <p className="text-red-600 text-xs">Invalid email</p>}
+                {errors.email && (
+                  <p className="text-red-600 text-xs">{errors.email.message}</p>
+                )}
               </div>
 
               {/* Phone */}
@@ -198,13 +210,19 @@ export const FormModal: React.FC<FormModalProps> = ({
                     !rounded-lg
                   "
                 />
+
+                {errors.phone && (
+                  <p className="text-red-600 text-xs">{errors.phone.message}</p>
+                )}
               </div>
 
               {/* Message */}
               <div className="space-y-1">
                 <Label>Your Message</Label>
                 <Textarea rows={3} {...register("message")} />
-                {errors.message && <p className="text-red-600 text-xs">Message too short</p>}
+                {errors.message && (
+                  <p className="text-red-600 text-xs">{errors.message.message}</p>
+                )}
               </div>
 
               {/* Attachments */}

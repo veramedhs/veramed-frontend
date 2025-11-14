@@ -98,7 +98,7 @@ const Header = () => {
               <NavLink to="/" hash="#services" className="nav-link">Services</NavLink>
               <NavLink to="/" hash="#about" className="nav-link">About</NavLink>
               <NavLink to="/" hash="#collaborate" className="nav-link">Be Partner With Us</NavLink>
-              <NavLink to="/" hash="#why-us" className="nav-link">Why Choose Us</NavLink>
+              {/* <NavLink to="/" hash="#why-us" className="nav-link">Why Choose Us</NavLink>} */}
               <NavLink to="/" hash="#contact" className="nav-link">Contact</NavLink>
               <Link to="/blog" className="nav-link">Blog</Link>
               <Link to="/leave-review" className="nav-link">Leave a Review</Link>

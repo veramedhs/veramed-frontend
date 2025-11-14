@@ -155,6 +155,9 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
               disabled={isLoading}
             />
           </div>
+          <div>
+            
+          </div>
 
           {/* ⭐ REPLACED WITH PHONE INPUT LIBRARY ⭐ */}
           <div className="space-y-2">

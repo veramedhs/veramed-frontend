@@ -10,6 +10,7 @@ import { Star, Paperclip, X, Loader2 } from "lucide-react";
 import { Toaster, toast } from 'react-hot-toast';
 import { apiClient } from '@/lib/apiClient';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import Footer from '@/components/Footer';
 
 // This is a standalone page, so it doesn't need props like isOpen or onOpenChange
 export const LeaveReviewPage: React.FC = () => {
@@ -148,6 +149,7 @@ export const LeaveReviewPage: React.FC = () => {
           </form>
         </Card>
       </div>
+      <Footer />
     </>
   );
 };

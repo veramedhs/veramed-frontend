@@ -2,6 +2,7 @@ import { CheckCircle, HeartHandshake, Stethoscope, Plane, ShieldCheck } from "lu
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import img from "@/assets/suj.jpg"
+import Footer from "@/components/Footer";
 
 const StartYourJourney = () => {
   const tourismServices = [
@@ -132,6 +133,7 @@ const StartYourJourney = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </section>
   );
 };

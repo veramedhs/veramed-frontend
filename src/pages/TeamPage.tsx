@@ -134,7 +134,7 @@ const Team: React.FC = () => {
             <Card className="max-w-2xl mx-auto p-8 shadow-card-medical">
                 <h3 className="text-2xl font-bold text-foreground mb-4">Have Questions for Our Team?</h3>
                 <p className="text-muted-foreground mb-6">We are here to help. Reach out to us for a free, no-obligation consultation.</p>
-                <Link to="/contact">
+                <Link to="/contact-us">
                     <Button variant="medical" size="lg">
                         Contact Us Now
                     </Button>

@@ -32,7 +32,7 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 
   const [fullName, setFullName] = useState("");
   const [countryCode, setCountryCode] = useState("+91");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(""); // ⭐ Full phone always shown
   const [message, setMessage] = useState("");
   const [attachments, setAttachments] = useState<File[]>([]);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
@@ -61,8 +61,9 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
     const dial = `+${data.dialCode}`;
     setCountryCode(dial);
 
-    const pureNumber = value.replace(data.dialCode, "");
-    setPhone(pureNumber);
+    // Always show full number (country code + actual number)
+    const number = value.replace("+", "").replace(data.dialCode, "");
+    setPhone(number);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,7 +112,8 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
     e.preventDefault();
 
     if (!fullName.trim()) return toast.error("Please enter your full name.");
-    if (!fullNameRegex.test(fullName)) return toast.error("Enter a valid full name.");
+    if (!fullNameRegex.test(fullName))
+      return toast.error("Enter a valid full name.");
 
     if (!phone.trim()) return toast.error("Enter your phone number.");
     if (phone.length < 5 || phone.length > 15)
@@ -129,7 +131,8 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   };
 
   return (
-    <>
+    <div className="max-h-[85vh] flex flex-col overflow-hidden">
+
       <DialogHeader className="p-4 pb-2">
         <DialogTitle className="text-xl font-bold text-center">
           Get a Free Consultation
@@ -139,8 +142,9 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
         </DialogDescription>
       </DialogHeader>
 
-      <div className="px-4 pb-4">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      {/* ⭐ Scrollable Body */}
+      <div className="flex-1 overflow-y-auto px-4 pb-4">
+        <form id="consultationForm" onSubmit={handleSubmit} className="space-y-4">
 
           {/* Full Name */}
           <div className="space-y-2">
@@ -155,11 +159,8 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
               disabled={isLoading}
             />
           </div>
-          <div>
-            
-          </div>
 
-          {/* ⭐ REPLACED WITH PHONE INPUT LIBRARY ⭐ */}
+          {/* Phone Number */}
           <div className="space-y-2">
             <Label>Phone Number</Label>
 
@@ -244,19 +245,29 @@ const ConsultationForm = ({ onSuccess }: { onSuccess?: () => void }) => {
             )}
           </div>
 
-          {/* Submit */}
-          <Button className="w-full" type="submit" variant="medical" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin mr-2" /> Submitting...
-              </>
-            ) : (
-              "Submit Request"
-            )}
-          </Button>
         </form>
       </div>
-    </>
+
+      {/* ⭐ Sticky Footer */}
+      <div className="p-4 border-t">
+        <Button
+          className="w-full"
+          type="submit"
+          variant="medical"
+          form="consultationForm"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin mr-2" /> Submitting...
+            </>
+          ) : (
+            "Submit Request"
+          )}
+        </Button>
+      </div>
+
+    </div>
   );
 };
 

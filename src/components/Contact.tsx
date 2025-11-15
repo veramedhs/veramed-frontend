@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import Select from "react-select";
+import countryList from "react-select-country-list";
 
 import {
   Phone,
@@ -30,13 +32,24 @@ const Contact = () => {
   const [countryCode, setCountryCode] = useState("+91");
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  // Handle text field changes
+  const countryOptions = countryList().getData();
+
+  // ⭐ NAME VALIDATION — only alphabets + spaces
+  const handleNameChange = (e: any) => {
+    const value = e.target.value;
+
+    if (/^[A-Za-z\s]*$/.test(value)) {
+      setFormData(prev => ({ ...prev, fullName: value }));
+    }
+  };
+
+  // Handle other text inputs
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Handle phone input changes
+  // Phone change
   const handlePhoneChange = (value: string, data: any) => {
     const dial = `+${data.dialCode}`;
     const numberOnly = value.replace(data.dialCode, "");
@@ -135,21 +148,23 @@ const Contact = () => {
               <h3 className="text-2xl font-bold mb-6">Get Your Free Consultation</h3>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                
+
                 {/* Row 1 */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  {/* Full name */}
                   <div>
                     <label className="block text-sm font-medium mb-2">Full Name *</label>
                     <Input
                       name="fullName"
                       placeholder="Enter your full name"
                       value={formData.fullName}
-                      onChange={handleInputChange}
+                      onChange={handleNameChange}
                       required
                     />
                   </div>
 
-                  {/* ⭐ Phone Input Library ⭐ */}
+                  {/* Phone */}
                   <div>
                     <label className="block text-sm font-medium mb-2">Phone Number *</label>
                     <PhoneInput
@@ -165,6 +180,7 @@ const Contact = () => {
 
                 {/* Row 2 */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
                   <div>
                     <label className="block text-sm font-medium mb-2">Email Address *</label>
                     <Input
@@ -177,13 +193,21 @@ const Contact = () => {
                     />
                   </div>
 
+                  {/* ⭐ Updated Preferred Country using react-select-country-list ⭐ */}
                   <div>
                     <label className="block text-sm font-medium mb-2">Preferred Country</label>
-                    <Input
-                      name="preferredCountry"
-                      placeholder="India, Singapore, Thailand..."
-                      value={formData.preferredCountry}
-                      onChange={handleInputChange}
+
+                    <Select
+                      options={countryOptions}
+                      placeholder="Select Country"
+                      value={countryOptions.find((c) => c.label === formData.preferredCountry) || null}
+                      onChange={(value: any) =>
+                        setFormData(prev => ({
+                          ...prev,
+                          preferredCountry: value.label
+                        }))
+                      }
+                      className="text-black"
                     />
                   </div>
                 </div>
@@ -233,7 +257,7 @@ const Contact = () => {
           </div>
         </div>
 
-        {/* BOTTOM CARD ACTIONS */}
+        {/* Bottom info cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="p-6 text-center hover:shadow-card-medical">
             <div className="p-4 bg-gradient-primary rounded-full w-16 h-16 mx-auto mb-4">

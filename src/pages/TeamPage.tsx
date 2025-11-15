@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Linkedin, Twitter, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
+import Footer from "../components/Footer";
+
 
 // --- TypeScript Type Definitions ---
 interface SocialLinks {
@@ -140,9 +142,12 @@ const Team: React.FC = () => {
                     </Button>
                 </Link>
             </Card>
+                  <Footer />
+
         </div>
       </div>
     </section>
+    
   );
 };
 

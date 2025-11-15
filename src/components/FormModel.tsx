@@ -1,3 +1,5 @@
+// src/components/FormModal.tsx
+
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,7 +27,7 @@ import { Textarea } from '@/components/ui/textarea';
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
-// Form validation
+// ----------------- Zod Validation -----------------
 const formSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
@@ -55,6 +57,7 @@ export const FormModal: React.FC<FormModalProps> = ({
   const [fileNames, setFileNames] = useState<string[]>([]);
   const [countryCode, setCountryCode] = useState("+91");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [nameInput, setNameInput] = useState("");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -78,6 +81,7 @@ export const FormModal: React.FC<FormModalProps> = ({
     }
   }, [watchedFiles]);
 
+  // ----------------------- PHONE -----------------------
   const handlePhoneChange = (value: string, country: any) => {
     const dial = `+${country.dialCode}`;
     setCountryCode(dial);
@@ -88,6 +92,16 @@ export const FormModal: React.FC<FormModalProps> = ({
     setValue("phone", numberOnly, { shouldValidate: true });
   };
 
+  // ----------------------- NAME VALIDATION -----------------------
+  const handleNameChange = (e: any) => {
+    const value = e.target.value;
+    if (/^[A-Za-z\s]*$/.test(value)) {
+      setNameInput(value);
+      setValue("name", value, { shouldValidate: true });
+    }
+  };
+
+  // ----------------------- REMOVE FILE -----------------------
   const handleRemoveFile = (index: number) => {
     const newFiles = [...(watchedFiles || [])].filter((_, i) => i !== index);
 
@@ -97,6 +111,7 @@ export const FormModal: React.FC<FormModalProps> = ({
     setValue("attachment", dt.files);
   };
 
+  // ----------------------- SUBMIT FORM -----------------------
   const onSubmit = async (data: FormValues) => {
     if (!phoneNumber.trim()) return toast.error("Please enter phone number.");
 
@@ -125,7 +140,9 @@ export const FormModal: React.FC<FormModalProps> = ({
       setPhoneNumber("");
       setFileNames([]);
       setCountryCode("+91");
+      setNameInput("");
       setIsOpen(false);
+
     } catch (err) {
       toast.dismiss();
       toast.error("Submission failed!");
@@ -141,19 +158,23 @@ export const FormModal: React.FC<FormModalProps> = ({
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>{triggerElement}</DialogTrigger>
 
-        {/* ⭐ FIXED — NO SCROLL, AUTO HEIGHT ⭐ */}
+        {/* ⭐ Modal with scrollable content (same as ReviewModal) */}
         <DialogContent
           className="
             sm:max-w-lg
             w-[96%]
             p-0
             rounded-xl
-            bg-card 
-            overflow-visible        /* NO SCROLL */
+            bg-card
+            shadow-lg
+            max-h-[85vh]
+            flex flex-col
+            overflow-hidden
           "
         >
-          <div className="p-4 sm:p-6">
-            
+          {/* ⭐ Scrollable Body Wrapper */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+
             <DialogHeader className="mb-3">
               <DialogTitle className="text-xl sm:text-2xl font-bold text-primary">
                 {title}
@@ -163,23 +184,31 @@ export const FormModal: React.FC<FormModalProps> = ({
               </DialogDescription>
             </DialogHeader>
 
+            {/* ---------------- FORM ---------------- */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
-              {/* Name */}
+              {/* NAME */}
               <div className="space-y-1">
                 <Label>Full Name</Label>
-                <Input {...register("name")} placeholder={namePlaceholder} />
-                {errors.name && <p className="text-red-600 text-xs">Enter valid name</p>}
+                <Input
+                  {...register("name")}
+                  value={nameInput}
+                  onChange={handleNameChange}
+                  placeholder={namePlaceholder}
+                />
+                {errors.name && (
+                  <p className="text-red-600 text-xs">Enter valid name</p>
+                )}
               </div>
 
-              {/* Email */}
+              {/* EMAIL */}
               <div className="space-y-1">
                 <Label>Email</Label>
                 <Input {...register("email")} placeholder="you@example.com" />
                 {errors.email && <p className="text-red-600 text-xs">Invalid email</p>}
               </div>
 
-              {/* Phone */}
+              {/* PHONE */}
               <div className="space-y-1">
                 <Label>Phone Number</Label>
 
@@ -200,14 +229,16 @@ export const FormModal: React.FC<FormModalProps> = ({
                 />
               </div>
 
-              {/* Message */}
+              {/* MESSAGE */}
               <div className="space-y-1">
                 <Label>Your Message</Label>
                 <Textarea rows={3} {...register("message")} />
-                {errors.message && <p className="text-red-600 text-xs">Message too short</p>}
+                {errors.message && (
+                  <p className="text-red-600 text-xs">Message too short</p>
+                )}
               </div>
 
-              {/* Attachments */}
+              {/* ATTACHMENTS */}
               <div className="space-y-1">
                 <Label>Attach Files</Label>
 
@@ -218,14 +249,28 @@ export const FormModal: React.FC<FormModalProps> = ({
                   <Paperclip className="w-4" /> Upload documents
                 </Label>
 
-                <Input id="attachment" type="file" className="hidden" multiple {...register("attachment")} />
+                <Input
+                  id="attachment"
+                  type="file"
+                  className="hidden"
+                  multiple
+                  {...register("attachment")}
+                />
 
                 {fileNames.length > 0 && (
                   <div className="space-y-1 mt-2">
                     {fileNames.map((name, idx) => (
-                      <div key={idx} className="flex justify-between bg-muted p-2 rounded-md">
+                      <div
+                        key={idx}
+                        className="flex justify-between bg-muted p-2 rounded-md"
+                      >
                         <span className="text-sm truncate">{name}</span>
-                        <Button variant="ghost" size="icon" onClick={() => handleRemoveFile(idx)}>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRemoveFile(idx)}
+                        >
                           <X className="w-4" />
                         </Button>
                       </div>
@@ -234,20 +279,22 @@ export const FormModal: React.FC<FormModalProps> = ({
                 )}
               </div>
 
-              <DialogFooter className="pt-2">
-                <DialogClose asChild>
-                  <Button variant="outline" type="button">
-                    Cancel
-                  </Button>
-                </DialogClose>
-
-                <Button type="submit" variant="medical" disabled={isSubmitting}>
-                  {isSubmitting ? <Loader2 className="animate-spin" /> : "Submit Inquiry"}
-                </Button>
-              </DialogFooter>
-
             </form>
           </div>
+
+          {/* ⭐ Sticky Footer */}
+          <DialogFooter className="p-4 border-t">
+            <DialogClose asChild>
+              <Button variant="outline" type="button">
+                Cancel
+              </Button>
+            </DialogClose>
+
+            <Button type="submit" variant="medical" disabled={isSubmitting}>
+              {isSubmitting ? <Loader2 className="animate-spin" /> : "Submit Inquiry"}
+            </Button>
+          </DialogFooter>
+
         </DialogContent>
       </Dialog>
     </>
